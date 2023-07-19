@@ -1,0 +1,52 @@
+
+String Matching 
+    1. Knuth-Morris-Pratt 
+        - single pattern 
+    2. Aho-Corasick 
+        - multiple patterns 
+
+Flow Algorithm 
+
+the shortest path in the graph 
+1. undirected graph 
+    positive - dijkstra (single-source , v*log2(e) ), floyd-warshall (all-pair,n^3) 
+    negative edge - undefined 
+2. directed graph - 
+    positive - dijkstra(single-source, eloge), floyd-warshall (all-pair,n^3) 
+    negative edge - bellman-ford(single-source,ve), floyd-warshall (all-pair,n^3) 
+    negative cycle - undefined, detection by bellman-ford, floyd-warshall 
+    
+    
+Range Minimum Query & range sum
+1. Segment tree
+    - time(n*2, logn), space(4n)
+    - dynamic data
+2. Binary Indexed Tree/ Fenwick Tree 
+    - time(nlogn, logn), space(n) 
+    - dynamic data 
+    - only [0,r] type query 
+3.Sparse Table 
+    - time(nlogn, 1), space(nlogn) 
+    - static data 
+    
+Sorting 
+1. bubble sort 
+    tc - n^2, sc - n 
+2. Merge Sort 
+3. Quick Sort
+    ave nlogn
+    worst n^2 (when data is sorted)
+4. Count Sort
+
+Minimum Spanning Tree
+    1. Prim's Algorithm
+    2. Kruskal's Algorithm
+
+SQL JOIN 
+1. A NATURAL JOIN can be an INNER join, a LEFT OUTER join, or a RIGHT OUTER join. The default is an INNER join. 
+2. Natural join is an inner join based on the title & data type.
+3. Join .. using ( ) is inner join quiet similar to inner join.
+4. outer join is full outer join.
+5. during aggregation where clause works on main relation data but having clause works on grouped data.
+
+
