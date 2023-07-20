@@ -1,3 +1,5 @@
+
+
 class Node
 {
 public:
@@ -128,7 +130,7 @@ struct AVLTree
                 Node *temp = node->left ? node->left : node->right;
                 if (temp == NULL)
                 {
-                    temp = root;
+                    temp = node;
                     node = NULL;
                 }
                 else *node = *temp;
@@ -141,8 +143,9 @@ struct AVLTree
                 node->right = deleteNode( node->right, temp->key);
             }
         }
-        if (node == NULL) return node;
 
+
+        if (node == NULL) return node;
         node->height = 1 + max(height(node->left), height(node->right));
         int balanceFactor = getBalanceFactor(node);
         if (balanceFactor > 1)
@@ -197,4 +200,6 @@ struct AVLTree
             printTree(node->right, indent, true);
         }
     }
+
 };
+
