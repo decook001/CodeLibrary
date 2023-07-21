@@ -1,5 +1,6 @@
 
 // default value
+
 create table student
 (ID varchar (5),
 name varchar (20) not null,
@@ -8,6 +9,7 @@ tot cred numeric (3,0) default 0,
 primary key (ID));
 
 // typedef
+
 create domain YearlySalary numeric(8,2) constraint salary value test check(value >= 29000.00);
 create domain DDollars as numeric(12,2) not null;
 create type Dollars as numeric(12,2) final;
@@ -21,3 +23,10 @@ budget Dollars);
 // table extension
 
 create table temp_instructor like instructor;
+
+
+// Authorization
+
+grant <privilege list>
+on <relation name or view name>
+to <user/role list>;
