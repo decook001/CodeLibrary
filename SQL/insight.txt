@@ -1,0 +1,13 @@
+SQL JOIN 
+1. A NATURAL JOIN can be an INNER join, a LEFT OUTER join, or a RIGHT OUTER join. The default is an INNER join. 
+2. Natural join is an inner join based on the title & data type.
+3. Join .. using ( ) is inner join quiet similar to inner join.
+4. outer join is full outer join.
+5. during aggregation where clause works on main relation data but having clause works on grouped data.
+
+
+Constraint
+1. candidate key - must be unique may be null.
+2. primary key - not null candidate key.
+3. foreign key - must be a candidate key of the referenced table and each row in child relation have a corresponding
+		 row in the referenced relation.

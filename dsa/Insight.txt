@@ -38,15 +38,10 @@ Sorting
     worst n^2 (when data is sorted)
 4. Count Sort
 
-Minimum Spanning Tree
+Minimum Spanning Tree (both works on negative edge/cycle)
     1. Prim's Algorithm
     2. Kruskal's Algorithm
 
-SQL JOIN 
-1. A NATURAL JOIN can be an INNER join, a LEFT OUTER join, or a RIGHT OUTER join. The default is an INNER join. 
-2. Natural join is an inner join based on the title & data type.
-3. Join .. using ( ) is inner join quiet similar to inner join.
-4. outer join is full outer join.
-5. during aggregation where clause works on main relation data but having clause works on grouped data.
+
 
 
