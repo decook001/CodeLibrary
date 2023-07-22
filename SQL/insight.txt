@@ -1,4 +1,9 @@
+chronology
+0. from -> where -> selsct
+1. from -> where -> group by -> having -> select
+
 SQL JOIN 
+0. inner join(natural join, join), outer join( left, right, full) 
 1. A NATURAL JOIN can be an INNER join, a LEFT OUTER join, or a RIGHT OUTER join. The default is an INNER join. 
 2. Natural join is an inner join based on the title & data type.
 3. Join .. using ( ) is inner join quiet similar to inner join.
@@ -7,7 +12,12 @@ SQL JOIN
 
 
 Constraint
-1. candidate key - must be unique may be null.
+1. candidate key - must be unique, may be null.
 2. primary key - not null candidate key.
 3. foreign key - must be a candidate key of the referenced table and each row in child relation have a corresponding
 		 row in the referenced relation.
+
+Aggregation 
+0. without group, with group.
+1. if selected attributes absent in the group by clause must be aggregated.
+2. 

@@ -30,3 +30,42 @@ create table temp_instructor like instructor;
 grant <privilege list>
 on <relation name or view name>
 to <user/role list>;
+
+
+// function
+
+create function dept_count(dept_name varchar(20)) returns integer
+begin
+declare d_count integer;
+select count(*) into d_count
+from instructor
+where instructor.dept_name = dept_name
+return d_count;
+end
+
+select dept name, budget
+from instructor
+where dept_count(dept name) > 12;
+
+// table function ( parameterized view )
+
+create function_instructors_of (dept_name varchar(20))
+returns table (
+ID varchar (5),
+name varchar (20),
+dept_name varchar (20),
+salary numeric (8,2))
+return table
+(select ID, name, dept name, salary
+from instructor
+where instructor.dept name = instructor of.dept name);
+
+select *
+from table(instructor of('Finance'));
+
+// procedure
+
+
+
+
+
