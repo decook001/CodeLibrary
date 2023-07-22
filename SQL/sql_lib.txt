@@ -65,6 +65,77 @@ from table(instructor of('Finance'));
 
 // procedure
 
+create procedure dept_count_proc(in dept_name varchar(20), out d_count integer)
+begin
+select count(*) into d_count
+from instructor
+where instructor.dept_name= dept_count_proc.dept_name
+end
+
+declare d_count integer;
+call dept_count_proc(’Physics’, d_count);
+
+create function_registerStudent(
+in s_id varchar(5),
+in s_courseid varchar (8),
+in s_secid varchar (8),
+in s_semester varchar (6),
+in s_year numeric (4,0),
+out errorMsg varchar(100)  )
+returns integer
+begin
+
+declare currEnrol int;
+select count(*) into currEnrol
+from takes
+where course_id = s_courseid and sec_id = s_secid and semester = s_semester and year = s_year;
+
+declare limit int;
+select capacity into limit
+from classroom natural join section
+where course_id = s_courseid and sec_id = s_secid and semester = s_semester and year = s_year;
+
+if (currEnrol < limit)
+begin
+insert into takes values (s_id, s_courseid, s_secid, s_semester, s_year, null);
+return(0);
+end
+
+– – Otherwise, section capacity limit already reached
+set errorMsg = ’Enrollment limit reached for course ’ || s_courseid || ’ section ’ || s_secid;
+return(-1);
+end;
+
+-- loop
+
+while <boolean_expression> do
+<sequence_of_statements>;
+end while
+
+repeat
+<sequence_of_statements>;
+until <boolean_expression>
+end repeat
+
+declare n integer default 0;
+for r as
+select budget from department
+where dept_name = ‘Music‘
+do
+set n = n− r.budget
+end for
+
+
+// conditionals
+
+if <boolean_expression>
+then <statement>
+elseif <boolean_expression>
+then <statement>
+else <statement>
+end if
+
+-- Trigger
 
 
 
