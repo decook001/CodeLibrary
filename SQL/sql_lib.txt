@@ -1,5 +1,5 @@
 
-// default value
+-- default value
 
 create table student
 (ID varchar (5),
@@ -8,7 +8,7 @@ dept name varchar (20),
 tot cred numeric (3,0) default 0,
 primary key (ID));
 
-// typedef
+-- typedef
 
 create domain YearlySalary numeric(8,2) constraint salary value test check(value >= 29000.00);
 create domain DDollars as numeric(12,2) not null;
@@ -20,19 +20,19 @@ create table department
 building varchar (15),
 budget Dollars);
 
-// table extension
+-- table extension
 
 create table temp_instructor like instructor;
 
 
-// Authorization
+-- Authorization
 
 grant <privilege list>
 on <relation name or view name>
 to <user/role list>;
 
 
-// function
+-- function
 
 create function dept_count(dept_name varchar(20)) returns integer
 begin
@@ -47,9 +47,9 @@ select dept name, budget
 from instructor
 where dept_count(dept name) > 12;
 
-// table function ( parameterized view )
+-- table function ( parameterized view )
 
-create function_instructors_of (dept_name varchar(20))
+create function instructor _of (dept_name varchar(20))
 returns table (
 ID varchar (5),
 name varchar (20),
@@ -61,15 +61,15 @@ from instructor
 where instructor.dept name = instructor of.dept name);
 
 select *
-from table(instructor of('Finance'));
+from table(instructor_of('Finance'));
 
-// procedure
+-- procedure
 
 create procedure dept_count_proc(in dept_name varchar(20), out d_count integer)
 begin
 select count(*) into d_count
 from instructor
-where instructor.dept_name= dept_count_proc.dept_name
+where instructor.dept_name = dept_count_proc.dept_name
 end
 
 declare d_count integer;
@@ -84,24 +84,19 @@ in s_year numeric (4,0),
 out errorMsg varchar(100)  )
 returns integer
 begin
-
 declare currEnrol int;
 select count(*) into currEnrol
 from takes
 where course_id = s_courseid and sec_id = s_secid and semester = s_semester and year = s_year;
-
 declare limit int;
 select capacity into limit
 from classroom natural join section
 where course_id = s_courseid and sec_id = s_secid and semester = s_semester and year = s_year;
-
 if (currEnrol < limit)
 begin
 insert into takes values (s_id, s_courseid, s_secid, s_semester, s_year, null);
 return(0);
 end
-
-– – Otherwise, section capacity limit already reached
 set errorMsg = ’Enrollment limit reached for course ’ || s_courseid || ’ section ’ || s_secid;
 return(-1);
 end;
@@ -125,8 +120,7 @@ do
 set n = n− r.budget
 end for
 
-
-// conditionals
+-- conditionals
 
 if <boolean_expression>
 then <statement>
@@ -137,6 +131,76 @@ end if
 
 -- Trigger
 
+create trigger timeslot_check1 after insert on section  
+referencing new row as nrow  
+for each row  
+when (nrow.time_slot_id not in (select time_slot_id from time_slot))  
+begin  
+rollback  
+end;  
+
+create trigger timeslot_check2 after delete on timeslot  
+referencing old row as orow  
+for each row  
+when (orow.time_slot_id not in (select time_slot_id from time_slot)  
+and orow.time_slot_id in (select time_slot_id from section))  
+begin
+rollback
+end;
+
+create trigger credits_earned after update of takes on (grade)
+referencing new row as nrow
+referencing old row as orow
+for each row
+when nrow.grade <> ’F’ and nrow.grade is not null and (orow.grade = ’F’ or orow.grade is null)
+begin atomic
+update student
+set tot_cred= tot_cred + (select credits from course where course.course_id= nrow.course_id)
+where student.id = nrow.id;
+end;
+
+-- rank
+
+select ID, rank () over (order by (GPA) desc) as s_rank
+from student_grades
+order by s_rank;
+
+select ID, (1 + (select count(*) from student_grades B where B.GPA > A.GPA)) as s_rank  
+from student_grades A  
+order by s_rank;  
+
+select ID, dept name, rank () over (partition by dept_name order by GPA desc) as dept_rank
+from dept_grades
+order by dept name, dept rank;
+
+select ID, GPA
+from student_grades
+order by GPA
+limit 10;
+
+select ID, ntile(4) over (order by (GPA desc)) as quartile
+from student grades;
+
+select ID, rank () over (order by GPA desc nulls last) as s_rank
+from student grades;
+
+select year, avg(num credits) over (order by year rows between 3 preceding and 2 following) as avg_total_credits
+from tot credits;
+
+select year, avg(num credits) over (order by year range between year - 4 and year) as avg total credits
+from tot credits;
+
+select dept_name, year, avg(num credits)
+over (partition by dept_name order by year rows between 3 preceding and current row)
+as avg_total_credits
+from tot_credits_dept;
+
+-- olap
+
+select * from sales
+pivot ( sum(quantity) for color in (’dark’,’pastel’,’white’) )
+order by item_name;
 
 
+-- recursion
 
