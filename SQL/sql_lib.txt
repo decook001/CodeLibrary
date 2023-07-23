@@ -1,3 +1,21 @@
+-- set operation
+
+(select course id
+from section
+where semester = ’Fall’ and year= 2009)
+intersect all
+(select course id
+from section
+where semester = ’Spring’ and year= 2010);
+
+-- aggregation with grouping
+
+select course_id, semester, year, sec_id, avg (tot cred)
+from takes natural join student
+where year = 2009
+group by course_id, semester, year, sec_id
+having count (ID) >= 2;
+
 
 -- default value
 
@@ -45,11 +63,11 @@ end
 
 select dept name, budget
 from instructor
-where dept_count(dept name) > 12;
+where dept_count(dept_name) > 12;
 
 -- table function ( parameterized view )
 
-create function instructor _of (dept_name varchar(20))
+create function instructor_of (dept_name varchar(20))
 returns table (
 ID varchar (5),
 name varchar (20),
@@ -129,6 +147,18 @@ then <statement>
 else <statement>
 end if
 
+SELECT OrderID, Quantity,
+CASE
+    WHEN Quantity > 30 THEN "The quantity is greater than 30"
+    WHEN Quantity = 30 THEN "The quantity is 30"
+    ELSE "The quantity is under 30"
+END
+FROM OrderDetails;
+
+triangle(t) -> x,y,z
+select *,  IF(x + y > z AND x + z > y AND y + z > x, 'Yes', 'No') as triangle 
+from triangle;
+
 -- Trigger
 
 create trigger timeslot_check1 after insert on section  
@@ -169,7 +199,7 @@ select ID, (1 + (select count(*) from student_grades B where B.GPA > A.GPA)) as 
 from student_grades A  
 order by s_rank;  
 
-select ID, dept name, rank () over (partition by dept_name order by GPA desc) as dept_rank
+select ID, dept_name, rank () over (partition by dept_name order by GPA desc) as dept_rank
 from dept_grades
 order by dept name, dept rank;
 
@@ -203,4 +233,12 @@ order by item_name;
 
 
 -- recursion
+
+
+-- tools
+date(string)
+datediff( end_date, begin_date )
+
+
+ 
 
