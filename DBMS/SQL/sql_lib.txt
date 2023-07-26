@@ -189,7 +189,11 @@ set tot_cred= tot_cred + (select credits from course where course.course_id= nro
 where student.id = nrow.id;
 end;
 
--- rank
+-- cumulative
+
+select *, 
+sum(weight) over ( order by turn asc ) as cumuwt
+from queue
 
 select ID, rank () over (order by (GPA) desc) as s_rank
 from student_grades
