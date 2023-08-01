@@ -239,6 +239,9 @@ order by item_name;
 -- recursion
 
 
+-- indexing/hashing
+
+
 -- tools
 date(string)
 datediff( end_date, begin_date )

@@ -43,14 +43,7 @@ public class Main
     }
 }
 
-<<<<<<< HEAD:project/src/main/java/Patterns/AbstractFactoryPattern.java
 
-abstract class AbstractFactory {
-    public abstract Furniture createChair();
-    public abstract Furniture createSofa();
-}
-
-=======
 abstract class AbstractFactory 
 {
     abstract Furniture createChair();
