@@ -1,11 +1,10 @@
 /*
 
 https://www.freecodecamp.org/news/solid-principles-explained-in-plain-english/
-   
+
 public class InvoicePersistence 
 {
     Invoice invoice;
-
     public InvoicePersistence(Invoice invoice) 
     {
         this.invoice = invoice;
@@ -18,6 +17,7 @@ public class InvoicePersistence
 }
 
 ------------------------------------------add new feature------------------------
+
 public class InvoicePersistence 
 {
     Invoice invoice;
@@ -47,9 +47,8 @@ interface InvoicePersistence
 
 public class DatabasePersistence implements InvoicePersistence 
 {
-
     @Override
-    public void save(Invoice invoice) 
+    public void save(Invoice invoice)
     {
         // Save to DB
     }
@@ -58,20 +57,21 @@ public class DatabasePersistence implements InvoicePersistence
 public class FilePersistence implements InvoicePersistence 
 {
     @Override
-    public void save(Invoice invoice) 
+    public void save(Invoice invoice)
     {
         // Save to file
     }
 }
 
-
-public class PersistenceManager {
+public class PersistenceManager
+{
     InvoicePersistence invoicePersistence;
     BookPersistence bookPersistence;
-    
-    public PersistenceManager(InvoicePersistence invoicePersistence,
-                              BookPersistence bookPersistence) {
+    public PersistenceManager(InvoicePersistence invoicePersistence, BookPersistence bookPersistence) 
+    {
         this.invoicePersistence = invoicePersistence;
         this.bookPersistence = bookPersistence;
     }
 }
+
+

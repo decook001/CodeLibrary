@@ -167,7 +167,7 @@ class Test
 
    static void getAreaTest(Rectangle r)
    {
-   	  r.setHeight(10);                            // fixiing here
+   	  r.setHeight(10);     // fixiing here
       int width = r.getWidth();
       System.out.println("Expected area of " + width + ", got " + r.getArea()); // here occurs the error
    }
