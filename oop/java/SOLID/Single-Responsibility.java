@@ -1,5 +1,25 @@
 /*	single resposibility principle
 
+https://www.freecodecamp.org/news/solid-principles-explained-in-plain-english/
+
+class Book 
+{
+	String name;
+	String authorName;
+	int year;
+	int price;
+	String isbn;
+
+	public Book(String name, String authorName, int year, int price, String isbn) 
+	{
+		this.name = name;
+		this.authorName = authorName;
+		this.year = year;
+        this.price = price;
+		this.isbn = isbn;
+	}
+}
+
 	public class Invoice 
 	{
 
@@ -66,17 +86,19 @@ public class Invoice
 		double priceWithTaxes = price * (1 + taxRate);
 		return priceWithTaxes;
 	}
-
 }
 
-public class InvoicePrinter {
+public class InvoicePrinter 
+{
     private Invoice invoice;
 
-    public InvoicePrinter(Invoice invoice) {
+    public InvoicePrinter(Invoice invoice)
+    {
         this.invoice = invoice;
     }
 
-    public void print() {
+    public void print() 
+    {
         System.out.println(invoice.quantity + "x " + invoice.book.name + " " + invoice.book.price + " $");
         System.out.println("Discount Rate: " + invoice.discountRate);
         System.out.println("Tax Rate: " + invoice.taxRate);
@@ -84,14 +106,16 @@ public class InvoicePrinter {
     }
 }
 
-public class InvoicePersistence {
+public class InvoicePersistence 
+{
     Invoice invoice;
-
-    public InvoicePersistence(Invoice invoice) {
+    public InvoicePersistence(Invoice invoice) 
+    {
         this.invoice = invoice;
     }
 
-    public void saveToFile(String filename) {
+    public void saveToFile(String filename) 
+    {
         // Creates a file with given name and writes the invoice
     }
 }

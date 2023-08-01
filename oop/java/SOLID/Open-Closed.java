@@ -63,3 +63,15 @@ public class FilePersistence implements InvoicePersistence
         // Save to file
     }
 }
+
+
+public class PersistenceManager {
+    InvoicePersistence invoicePersistence;
+    BookPersistence bookPersistence;
+    
+    public PersistenceManager(InvoicePersistence invoicePersistence,
+                              BookPersistence bookPersistence) {
+        this.invoicePersistence = invoicePersistence;
+        this.bookPersistence = bookPersistence;
+    }
+}
