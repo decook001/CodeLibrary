@@ -1,7 +1,8 @@
 
 Theory
+  
+  for given (a,b,c), ax+by=c has a solution for some (x,y)  <->  gcd(a,b) | c 
   where a,b,c,x,y is in Z
-  for given (a,b,c), ax+by=c has a solution for (x,y)  <->  gcd(a,b) | c 
 
 step 1: ax+by=c has a solution for (x,y) -> gcd(a,b) | c
 proof:
@@ -15,9 +16,10 @@ step 2:  gcd(a,b) | c  ->  ax+by=c has a solution for (x,y)
 
 let d=gcd(a,b)
 according to the extended Euclidean theorem, d=ax+by for some x,y 
-c=c/d*x a+ c/d*y b
+c=c/d*x*a+ c/d*y*b
 
 
 Solutions :
-x'=x-b/d*t
-y'=y+a/d*t
+if a solution (x,y) exists then there exists an infinite number of solutions
+x'=x+k*lcm(a,b)
+y'=y-k*lcm(a,b)
