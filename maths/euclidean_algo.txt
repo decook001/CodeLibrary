@@ -1,13 +1,11 @@
 Required theories
-1. a===c (mod b) <-> a-c=bx <-> b|(a-c)  where a,b,c,x is in Z
-2. a>0 and a|b <-> gcd(a,b)=a
+where a,b,c,x is in Z
+1. a===c (mod b) <-> a-c=bx <-> b|(a-c)  
+2. a>0, a|b <-> gcd(a,b)=a
 3. gcd(a,b)=c ->  a===b===0 (mod c)
 
-Euclidean algo says
-a===c (mod b) iff  gcd(a,b)=gcd(b,c)
-or
-a=bx+c iff  gcd(a,b)=gcd(b,c)
-
+Euclidean algorithm says
+4. a-c=bx <-> a===c (mod b) ->  gcd(a,b)=gcd(b,c)
 
 proof:
 
@@ -30,6 +28,21 @@ g2|bx, g2|c -> g2|(bx+c)
 step 3:
 -> g1=g2=gcd(a,b,c)
 -> gcd(a,b)=gcd(b,c) 
+
+
+Related-
+
+Theory:
+gcd(a,b)=gcd(b,c) -> gcd(a,b)=gcd(b,c)=gcd(a,b,c)
+
+proof:
+gcd(a,b)=gcd(b,c)
+
+-> gcd(a,b) | gcd(b,c)
+-> gcd( gcd(a,b), gcd(b,c) ) = gcd(a,b) (from 2)
+-> gcd( a,b,c ) = gcd(a,b)
+
+
 
 
 resources - 
