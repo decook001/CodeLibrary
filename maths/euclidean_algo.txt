@@ -1,6 +1,7 @@
 Required theories
 1. iff a===c (mod b) then a=c+bx where a,b,c,x is in Z
 2. iff a>0 and a|b then gcd(a,b)=a
+3. gcd(a,b)=c iff c|(a-b) aka a-b=ck aka a===b (mod c)
 
 Euclidean algo says
 a===c (mod b) iff  gcd(a,b)=gcd(b,c)
