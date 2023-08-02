@@ -1,3 +1,4 @@
+// https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/
 // single pattern string matching
 // pre-process pattern
 
