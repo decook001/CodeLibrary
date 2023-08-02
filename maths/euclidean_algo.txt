@@ -4,7 +4,7 @@ where a,b,c,x is in Z
 2. a>0, a|b <-> gcd(a,b)=a
 3. gcd(a,b)=c ->  a===b===0 (mod c)
 
-Euclidean algorithm says
+Euclidean theorem says
 4. a-c=bx <-> a===c (mod b) ->  gcd(a,b)=gcd(b,c)
 
 proof:
@@ -30,7 +30,9 @@ step 3:
 -> gcd(a,b)=gcd(b,c) 
 
 
-Extended Euclidean Algorithm
+Extended Euclidean theorem
+
+There is some x,y in Z for which gcd(a,b)=ax+by
 
 
 
