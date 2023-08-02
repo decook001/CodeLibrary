@@ -1,3 +1,5 @@
+//  https://cp-algorithms.com/graph/lca.html
+
 struct Lca
 {
     vi euler, first, height, segtree, parent;
