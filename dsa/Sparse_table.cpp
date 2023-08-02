@@ -1,3 +1,4 @@
+//  https://cp-algorithms.com/data_structures/sparse-table.html
 // works on only static data not on dynamic data
 // 0-indexed
 // range sum 
