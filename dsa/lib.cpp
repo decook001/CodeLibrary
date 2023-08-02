@@ -107,7 +107,7 @@ struct NumTheo
     vector<int> spf; // smallest prime factor
     vi primes;
 
-    map<int,int> prime_fctr_cnt(int x, map<int, int>& mapu )
+    void prime_fctr_cnt(int x, map<int, int>& mapu )
     {
         while( x>1 )
         {
@@ -185,6 +185,25 @@ struct NumTheo
         }
         return ans;
     }
+
+    int exuclid( int a, int b, int& x, int& y )
+    {
+
+        if(b==0)
+        {
+            x=1;
+            y=0;
+            return a;
+        }
+
+        int g=exeuc( b, a%b, x, y );
+        int tmp=y;
+        y=x-(a/b)*y;
+        x=tmp;
+        return g;   //   g=ax+by
+
+    }
+
 } numt(3) ;
 
 
