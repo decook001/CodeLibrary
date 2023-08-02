@@ -1,0 +1,4 @@
+
+Theory
+  where a,b,c,x,y is in Z
+  for given (a,b,c), ax+by=c has a solution for (x,y) <-> gcd(a,b) | c
