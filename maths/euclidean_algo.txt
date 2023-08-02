@@ -30,6 +30,10 @@ step 3:
 -> gcd(a,b)=gcd(b,c) 
 
 
+Extended Euclidean Algorithm
+
+
+
 Related-
 
 Theory:
