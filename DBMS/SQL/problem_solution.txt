@@ -18,5 +18,35 @@ abar as
 select round( a.cnt/b.cnt*100, 2 ) as immediate_percentage
 from aha a, abar b
 
+# 176
+
+with aha as
+(
+    select e.salary, rank() over ( order by e.salary desc ) as rnk
+    from Employee e
+    group by e.salary
+),
+abar as
+(
+    select count(*) as cnt
+    from aha a
+)
+
+select
+(
+    case 
+    when b.cnt>=2 then 
+    (
+        select a.salary
+        from aha a
+        where a.rnk=2
+    )
+    else null
+    end
+) SecondHighestSalary
+from  abar b
+
+
+
 
 ------------------------------------Hackerrank---------------------------------
