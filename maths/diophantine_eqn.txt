@@ -19,5 +19,5 @@ c=c/d*x a+ c/d*y b
 
 
 Solutions :
-
-
+x'=x-b/d*t
+y'=y+a/d*t
