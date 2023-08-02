@@ -1,7 +1,7 @@
 
 Theory
   where a,b,c,x,y is in Z
-  for given (a,b,c), ax+by=c has a solution for (x,y) <-> gcd(a,b) | c
+  for given (a,b,c), ax+by=c has a solution for (x,y)  <->  gcd(a,b) | c 
 
 step 1: ax+by=c has a solution for (x,y) -> gcd(a,b) | c
 proof:
@@ -12,5 +12,12 @@ d|ax, d|by
 -> gcd(a,b) | c
 
 step 2:  gcd(a,b) | c  ->  ax+by=c has a solution for (x,y)
+
+let d=gcd(a,b)
+according to the extended Euclidean theorem, d=ax+by for some x,y 
+c=c/d*x a+ c/d*y b
+
+
+Solutions :
 
 
