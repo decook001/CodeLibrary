@@ -2,3 +2,11 @@
 Theory
   where a,b,c,x,y is in Z
   for given (a,b,c), ax+by=c has a solution for (x,y) <-> gcd(a,b) | c
+
+step 1: ax+by=c has a solution for (x,y) -> gcd(a,b) | c
+proof:
+let d=gcd(a,b)
+d|ax, d|by -> d|(ax+by) -> d|c
+gcd(a,b) | c
+
+step 2:  gcd(a,b) | c  ->  ax+by=c has a solution for (x,y)
