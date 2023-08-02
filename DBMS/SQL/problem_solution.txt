@@ -1,0 +1,22 @@
+
+---------------------------------------LEETCODE---------------------------------
+
+#1173
+
+with aha as
+(
+    select count(d.delivery_id) as cnt
+    from Delivery d
+    where datediff( d.customer_pref_delivery_date, d.order_date )=0
+),
+abar as
+(
+    select count(*) as cnt
+    from Delivery d
+)
+
+select round( a.cnt/b.cnt*100, 2 ) as immediate_percentage
+from aha a, abar b
+
+
+------------------------------------Hackerrank---------------------------------
