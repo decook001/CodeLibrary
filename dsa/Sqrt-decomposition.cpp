@@ -1,4 +1,4 @@
-
+https://cp-algorithms.com/data_structures/sqrt_decomposition.html
 
 struct SqrtDecomp
 {
@@ -38,4 +38,4 @@ private:
 
 };
 
-
+// mo's algorithm
