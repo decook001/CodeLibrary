@@ -1,4 +1,4 @@
-// https://www.programiz.com/dsa/avl-tree#:~:text=AVL%20tree%20is%20a%20self,Georgy%20Adelson%2DVelsky%20and%20Landis.
+// https://www.programiz.com/dsa/avl-tree/
 
 class Node
 {
