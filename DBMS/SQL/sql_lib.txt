@@ -81,7 +81,7 @@ where instructor.dept name = instructor of.dept name);
 select *
 from table(instructor_of('Finance'));
 
--- procedure
+-- procedure // use for returning table
 
 create procedure dept_count_proc(in dept_name varchar(20), out d_count integer)
 begin

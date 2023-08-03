@@ -1,6 +1,6 @@
 chronology
 0. from -> where -> selsct
-1. from -> where -> group by -> having -> select
+1. from -> where -> group by -> having -> select -> order by
 
 SQL JOIN 
 0. inner join(natural join, join), outer join( left, right, full) 

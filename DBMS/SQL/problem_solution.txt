@@ -1,23 +1,6 @@
 
 ---------------------------------------LEETCODE---------------------------------
 
-#1173
-
-with aha as
-(
-    select count(d.delivery_id) as cnt
-    from Delivery d
-    where datediff( d.customer_pref_delivery_date, d.order_date )=0
-),
-abar as
-(
-    select count(*) as cnt
-    from Delivery d
-)
-
-select round( a.cnt/b.cnt*100, 2 ) as immediate_percentage
-from aha a, abar b
-
 # 176
 
 with aha as
@@ -46,7 +29,108 @@ select
 ) SecondHighestSalary
 from  abar b
 
+# 177
 
+CREATE FUNCTION getNthHighestSalary(n INT) RETURNS INT
+BEGIN
+    return
+    (
+        with abar as
+        (
+            select e.salary, rank() over ( order by e.salary desc ) rnk
+            from Employee e
+            group by e.salary
+        ),
+        aha as
+        (
+            select count(*) cnt
+            from abar a
+        )
+
+        select 
+        (
+            case
+            when a.cnt>=n then 
+            (
+                select b.salary
+                from abar b
+                where b.rnk=n
+            )
+            else null
+            end
+        )
+        from aha a
+    );
+END
+
+# 178
+
+select s.score, dense_rank() over ( order by s.score desc ) as "rank"
+from Scores s
+
+# 180
+
+with aha as 
+(
+    select l1.id, l1.num
+    from Logs l1 inner join Logs l2
+    on l1.num=l2.num and l1.id+1=l2.id
+)
+
+select distinct l1.num as ConsecutiveNums
+from Logs l1 inner join aha a
+on l1.num=a.num and l1.id+1=a.id
+
+# 184
+
+with aha as
+(
+    select d.id, max( e.salary ) as maxi, d.name
+    from Employee e inner join Department d
+    on e.departmentId=d.id
+    group by d.id
+)
+
+select a.name Department, e.name Employee , e.salary
+from aha a inner join Employee e
+on a.id=e.departmentId and a.maxi=e.salary
+
+# 185
+
+with aha as
+(
+    select e.departmentId, e.salary, 
+    dense_rank() over ( partition by e.departmentId order by e.salary desc ) as rnk
+    from Employee e
+),
+abar as
+(
+    select a.departmentId, a.salary as maxi, d.name
+    from aha a inner join Department d
+    on a.departmentId=d.id and a.rnk<=3
+    group by a.departmentId, a.rnk
+)
+
+select a.name as "Department", e.name as "Employee", e.salary as "Salary"
+from Employee e inner join abar a
+on e.departmentId=a.departmentId and e.salary=a.maxi
+
+# 1173
+
+with aha as
+(
+    select count(d.delivery_id) as cnt
+    from Delivery d
+    where datediff( d.customer_pref_delivery_date, d.order_date )=0
+),
+abar as
+(
+    select count(*) as cnt
+    from Delivery d
+)
+
+select round( a.cnt/b.cnt*100, 2 ) as immediate_percentage
+from aha a, abar b
 
 
 ------------------------------------Hackerrank---------------------------------
