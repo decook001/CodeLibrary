@@ -29,6 +29,8 @@ select
 ) SecondHighestSalary
 from  abar b
 
+
+
 # 177
 
 CREATE FUNCTION getNthHighestSalary(n INT) RETURNS INT
@@ -43,10 +45,8 @@ BEGIN
         ),
         aha as
         (
-            select count(*) cnt
-            from abar a
+            select count(*) cnt from abar a
         )
-
         select 
         (
             case
@@ -63,10 +63,14 @@ BEGIN
     );
 END
 
+
+
 # 178
 
 select s.score, dense_rank() over ( order by s.score desc ) as "rank"
 from Scores s
+
+
 
 # 180
 
@@ -81,6 +85,8 @@ select distinct l1.num as ConsecutiveNums
 from Logs l1 inner join aha a
 on l1.num=a.num and l1.id+1=a.id
 
+
+
 # 184
 
 with aha as
@@ -94,6 +100,8 @@ with aha as
 select a.name Department, e.name Employee , e.salary
 from aha a inner join Employee e
 on a.id=e.departmentId and a.maxi=e.salary
+
+
 
 # 185
 
@@ -115,6 +123,248 @@ select a.name as "Department", e.name as "Employee", e.salary as "Salary"
 from Employee e inner join abar a
 on e.departmentId=a.departmentId and e.salary=a.maxi
 
+
+
+# 262
+
+with User as
+(
+    select * 
+    from Users u
+    where u.banned="No"
+),
+com as
+(
+    select t.id, t.driver_id, t.request_at, t.status
+    from Trips t inner join User u
+    on t.client_id=u.users_id
+),
+abar as
+(
+    select t.id, t.request_at, t.status
+    from com t inner join User u
+    on t.driver_id=u.users_id
+),
+fir as
+(
+    select count(*) cnt, a.request_at
+    from abar a
+    group by a.request_at
+),
+ses as
+(
+   select count(*) as cnt, a.request_at
+   from abar a
+   where a.status!="completed"
+   group by a.request_at
+)
+
+select f.request_at as "Day", 
+round( if(s.cnt is null, 0, s.cnt) /f.cnt, 2 ) as "Cancellation Rate"
+from fir f left join ses s
+on f.request_at=s.request_at
+where f.request_at between date( "2013-10-01" ) and date( "2013-10-03" )
+
+
+
+# 550
+
+with flin as
+(
+    select player_id, min( event_date ) as date
+    from activity
+    group by player_id
+),
+slin as
+(
+    select t.player_id as id, min( t.event_date ) as date
+    from activity t inner join flin on flin.player_id=t.player_id
+    where t.event_date <> flin.date
+    group by t.player_id
+),
+nmbr as
+(
+    select count(*) as aha
+    from flin inner join slin on flin.player_id=slin.id
+    where datediff( slin.date, flin.date ) = 1
+),
+tot as
+(
+    select count( distinct player_id ) as aha from activity
+)
+
+select round( nmbr.aha/tot.aha, 2 ) as fraction
+from nmbr, tot
+
+
+# 585
+
+with tivff as
+(
+    select i.tiv_2015 as tiv
+    from Insurance i 
+    group by i.tiv_2015
+    having count( distinct i.pid) > 1
+),
+places as
+(
+    select j.lat as lat, j.lon as lon
+    from insurance j
+    group by j.lat, j.lon
+    having count( distinct j.pid ) =1
+)
+
+select   round(sum(k.tiv_2016),2) as tiv_2016
+from insurance k, places, tivff
+where k.tiv_2015 in ( tivff.tiv ) 
+
+# 601
+
+with ses as
+(
+    select s.id
+    from Stadium s left join Stadium t
+    on s.id+1=t.id
+    where s.people >= 100 and (t.people is null or t.people<100 )
+),
+suru as
+(
+    select s.id
+    from Stadium s left join Stadium t
+    on s.id-1=t.id
+    where (t.people is null or t.people<100) and s.people >= 100
+),
+suruses as
+(
+    select p.id as suru, min( q.id ) as ses
+    from suru p inner join ses q
+    on p.id<=q.id
+    group by p.id
+    having min( q.id )>=p.id+2
+)
+
+select s.id, s.visit_date, s.people
+from suruses v inner join Stadium s
+on s.id>=v.suru && s.id<=v.ses
+order by s.visit_date asc
+
+
+
+# 602
+
+with lft as
+(
+    select ra.requester_id as id, 
+    (
+        select count(*)
+        from RequestAccepted rb
+        where id=rb.requester_id or id=rb.accepter_id
+    ) as num
+    from RequestAccepted ra
+    group by ra.requester_id
+    order by num desc
+    limit 1
+),
+rit as
+(
+    select ra.accepter_id as id, 
+    (
+        select count(*)
+        from RequestAccepted rb
+        where id=rb.requester_id or id=rb.accepter_id
+    ) as num
+    from RequestAccepted ra
+    group by ra.accepter_id
+    order by num desc
+    limit 1
+)
+
+select 
+(
+    case 
+    when lft.num>=rit.num then lft.id
+    else rit.id
+    end
+) as id ,
+(
+    case 
+    when lft.num>=rit.num then lft.num
+    else rit.num
+    end
+) as num 
+from lft, rit
+
+
+
+# 1045
+
+with aha as
+(
+  select count( distinct p.product_key ) as "cnt"
+  from Product p
+)
+
+select c.customer_id
+from Customer c, aha a
+group by c.customer_id
+having count(distinct c.product_key )=min(a.cnt)
+
+
+# 1158
+
+with aha as
+(
+  select o.buyer_id, count( distinct o.order_id ) cnt
+  from Orders o
+  where o.order_date between date( "2019-01-01" ) and date( "2019-12-31" )
+  group by o.buyer_id
+)
+
+select u.user_id buyer_id, u.join_date , 
+(
+  case 
+  when a.cnt is null then 0
+  else a.cnt
+  end
+) orders_in_2019
+from Users u left join aha a
+on u.user_id=a.buyer_id
+
+
+
+# 1164
+
+with aha as
+(
+    select p.product_id, p.change_date, p.new_price,
+    rank() over ( partition by p.product_id order by p.change_date desc ) as c_rank
+    from Products p
+    where p.change_date <= date( "2019-08-16" )
+),
+aro as
+(
+    select aha.product_id as id, aha.change_date, aha.new_price
+    from aha 
+    where aha.c_rank=1
+),
+abaro as
+(
+    select distinct p.product_id as id
+    from Products p
+)
+
+select abaro.id as product_id,
+(
+    case 
+    when aro.new_price is null then 10
+    else aro.new_price
+    end
+) as price
+from abaro left join aro 
+on abaro.id=aro.id
+
+
+
 # 1173
 
 with aha as
@@ -131,6 +381,147 @@ abar as
 
 select round( a.cnt/b.cnt*100, 2 ) as immediate_percentage
 from aha a, abar b
+
+
+# 1174
+
+with aha as
+(
+    select d.customer_id, min( d.order_date ) as order_date
+    from Delivery d
+    group by d.customer_id
+),
+abar as
+(
+    select count(*) as cnt
+    from aha a inner join delivery d 
+    on ( a.customer_id=d.customer_id and a.order_date=d.order_date )
+    where d.order_date=d.customer_pref_delivery_date
+),
+barbar as
+(
+    select count(*) as cnt
+    from aha
+)
+
+select round( abar.cnt/barbar.cnt*100, 2 ) as immediate_percentage
+from abar, barbar
+
+
+
+# 1193
+
+with aha as
+(
+    select substr(t.trans_date,1,7) as month, 
+    t.country, sum(t.amount) as trans_total_amount, 
+    count(id) as trans_count
+    from Transactions t
+    group by month, t.country
+),
+abar as
+(
+    select substr(t.trans_date,1,7) as month, 
+    t.country, sum(t.amount) as approved_total_amount, 
+    count(id) as approved_count
+    from Transactions t
+    where t.state="approved"
+    group by month, t.country
+)
+
+select aha.month, aha.country, aha.trans_count, 
+( 
+    case 
+    when  abar.approved_count is null then 0
+    else abar.approved_count
+    end
+) as approved_count,
+aha.trans_total_amount, 
+(
+    case
+    when abar.approved_total_amount is null then 0
+    else abar.approved_total_amount
+    end
+) as approved_total_amount
+from aha left join abar 
+on ( aha.month=abar.month and aha.country=abar.country )
+
+
+
+# 1204
+
+with aha as
+(
+  select *, 
+  sum(weight) over ( order by turn asc ) as cumuwt
+  from queue
+)
+
+select aha.person_name
+from aha
+where aha.cumuwt<=1000
+order by aha.cumuwt desc
+limit 1
+
+
+# 1321
+
+with aha as
+(
+    select c.visited_on, sum( c.amount ) as amount
+    from Customer c
+    group by c.visited_on
+),
+mini as
+(
+    select min( visited_on ) as mini
+    from aha
+)
+
+select a.visited_on, sum( b.amount ) as amount,
+round( sum( b.amount )/7, 2 ) as average_amount
+from aha as a, aha as b, mini
+where datediff( a.visited_on, b.visited_on ) <=6 
+and datediff( a.visited_on, b.visited_on ) >=0
+and datediff( a.visited_on, mini.mini ) >= 6
+group by a.visited_on
+order by a.visited_on
+
+
+
+# 1341
+
+with aha as
+(
+    select mr.movie_id as id, avg( mr.rating ) as av
+    from MovieRating mr
+    where substr( mr.created_at, 1, 7 ) = "2020-02"
+    group by mr.movie_id
+),
+abar as
+(
+    select *
+    from aha inner join Movies m
+    on aha.id=m.movie_id
+    order by aha.av desc, m.title asc
+    limit 1
+),
+eibar as
+(
+    select mr.user_id as id , count(*) as cnt, u.name
+    from MovieRating mr inner join Users u
+    on mr.user_id=u.user_id
+    group by mr.user_id
+    order by cnt desc, u.name asc
+    limit 1
+),
+ses as
+(
+    ( select eibar.name from eibar ) union all ( select abar.title from abar )
+)
+
+select ses.name as results
+from ses
 
 
 ------------------------------------Hackerrank---------------------------------
