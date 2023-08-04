@@ -676,6 +676,94 @@ on s.user_id=r.user_id
 
 ------------------------------------Hackerrank---------------------------------
 
+
+# binary tree nodes
+
+select N as node, 
+case 
+    when P is null then "Root"
+    when ( select count(*) from BST where P=node ) = 0 then "Leaf"
+    else "Inner"
+end
+from BST
+order by node asc
+
+# Challenges
+
+
+with uva as
+(
+    select h.hacker_id, count(distinct h.challenge_id) as cnt
+    from Challenges h
+    group by h.hacker_id
+),
+uva1 as
+(
+    select max( u.cnt ) as mx
+    from uva u
+),
+uva2 as
+(
+    select h.hacker_id, h.name, u.cnt
+    from Hackers h inner join uva u on ( h.hacker_id=u.hacker_id ),uva1 u1
+    where u.cnt=u1.mx
+)
+select * from uva2 u
+order by u.hacker_id;
+
+with uva as
+(
+    select h.hacker_id, count(distinct h.challenge_id) as cnt
+    from Challenges h
+    group by h.hacker_id
+),
+uva1 as
+(
+    select max( u.cnt ) as mx
+    from uva u
+),
+uva2 as
+(
+    select u.cnt
+    from uva u, uva1 u1
+    where u.cnt<u1.mx 
+    group by u.cnt
+    having count( u.hacker_id )=1
+),
+uva3 as
+(
+    select u.hacker_id, u.cnt
+    from uva u inner join uva2 u2 on u.cnt=u2.cnt
+)
+
+select h.hacker_id, h.name, u.cnt
+from Hackers h inner join uva3 u on h.hacker_id=u.hacker_id
+order by u.cnt desc;
+
+
+# contest leadeboard
+
+
+with aha as
+(
+    select s.hacker_id, max(s.score) as score
+    from Submissions s
+    group by s.hacker_id, s.challenge_id
+),
+abar as
+(
+    select a.hacker_id, sum(a.score) as sum
+    from aha a
+    group by a.hacker_id
+    having sum( a.score )>0
+)
+
+select a.hacker_id, h.name, a.sum
+from abar a inner join Hackers h
+on a.hacker_id=h.hacker_id
+order by a.sum desc, a.hacker_id asc
+
+
 # draw the triangle 2
 
 DELIMITER $$
@@ -737,3 +825,232 @@ select c.contest_id, t.hacker_id, t.name, c.totsub, c.ac, c.totv, c.uv
 from Combi c inner join Contests t
 on c.contest_id=t.contest_id
 order by c.contest_id
+
+
+# new companies
+
+
+select  c.company_code,c.founder,
+(select count(distinct lm.lead_manager_code ) from Lead_Manager as lm where lm.company_code=c.company_code ),
+(select count(distinct sm.senior_manager_code ) from Senior_Manager as sm where sm.company_code=c.company_code  ),
+(select count( distinct m.manager_code) from Manager as m where m.company_code=c.company_code  ),
+(select count(distinct e.employee_code) from Employee as e  where e.company_code=c.company_code  )
+from  Company as c order by c.company_code asc
+
+
+# occupations
+
+
+select 
+max( case occupation when "Doctor" then aha.name else null end ),
+max( case occupation when "Professor" then aha.name else null end ),
+max( case occupation when "Singer" then aha.name else null end ),
+max( case occupation when "Actor" then aha.name else null end )
+from
+(select name, occupation, row_number() over ( partition by occupation order by name ) rnum from occupations) aha
+group by aha.rnum ;
+
+# ollivander's inventory
+
+
+with aha as
+(
+    select w.id, w.power, p.age, w.coins_needed, rank() over( partition by w.power, p.age order by w.coins_needed asc ) as num
+    from Wands w inner join Wands_Property p on w.code=p.code
+    where p.is_evil=0
+)
+
+select a.id, a.age, a.coins_needed, a.power
+from aha a
+where a.num=1
+order by a.power desc, a.age desc
+
+
+# placements
+
+
+with friend_salary as
+(
+    select f.ID, p.Salary
+    from Friends f inner join Packages p
+    on f.Friend_ID=p.ID
+),
+abar as
+(
+    select f.ID, f.Salary
+    from friend_salary f inner join Packages p
+    on f.ID=p.ID
+    where f.Salary>p.Salary
+)
+
+select s.Name 
+from abar a inner join Students s
+on a.ID=s.ID
+order by a.Salary asc
+
+
+# print prime numbers
+
+
+DECLARE @result VARCHAR(MAX) = ''; 
+DECLARE @i INT = 2; 
+DECLARE @n INT; 
+DECLARE @remainder INT;
+
+WHILE @i <= 1000 BEGIN 
+    SET @n = 2; 
+    SET @remainder = 1;
+    WHILE @n < @i BEGIN
+        SET @remainder = @i % @n;
+        IF (@remainder = 0) BREAK;
+        SET @n += 1;
+    END
+
+    IF @remainder <> 0
+        SET @result += CAST(@i AS VARCHAR) + '&';
+
+    SET @i += 1;
+END;
+
+SET @result = LEFT(@result, LEN(@result) - 1);
+PRINT @result;
+
+
+# sql project planning
+
+with lst as
+(
+    select p.End_Date, rank() over ( order by p.End_Date asc ) as rank
+    from Projects p left join Projects q
+    on p.End_Date=q.Start_Date
+    where q.Start_Date is null
+),
+fst as
+(
+    select p.Start_Date, rank() over ( order by p.Start_Date asc ) as rank
+    from Projects p left join Projects q
+    on p.Start_Date=q.End_Date
+    where q.End_Date is null
+)
+
+select f.Start_Date, l.End_Date
+from fst f inner join lst l
+on f.rank=l.rank
+order by datediff(day, f.Start_Date, l.End_Date ) asc, f.Start_Date asc
+
+
+# symmetric pairs
+
+with aha as
+(
+    (select f.X, f.Y
+    from Functions f
+    where f.X=f.Y
+    group by f.X,f.Y
+    having count(*)>1)
+    union
+    (select f.X, f.Y
+    from Functions f inner join Functions g
+    on (f.X=g.Y and f.Y=g.X)
+    where f.X < f.Y)
+)
+
+select * 
+from aha a
+order by a.X
+
+# the pads
+
+select CONCAT(Name,"(",left(Occupation,1),")")
+from OCCUPATIONS
+ORDER BY Name;
+select  "There are a total of",count(*), CONCAT(LOWER(Occupation),"s.")
+from OCCUPATIONS
+group by (Occupation)
+ORDER BY COUNT(*);
+
+
+# the reports
+
+
+with aha as
+(
+    select s.Name, g.Grade, s.Marks
+    from Students s inner join Grades g
+    on (s.Marks<=g.Max_Mark and s.Marks>=Min_Mark)
+    where s.Marks >= 70
+    order by g.Grade desc, s.Name asc
+)
+select * from aha a;
+
+
+with abar as
+(
+    select g.Grade, s.Marks
+    from Students s inner join Grades g
+    on (s.Marks<=g.Max_Mark and s.Marks>=Min_Mark)
+    where s.Marks<70
+    order by g.Grade desc, s.Marks asc
+)
+select "NULL", a.*
+from abar a;
+
+
+# top competitors
+
+with challege_score as
+(
+    select c.challenge_id, d.score
+    from Challenges c inner join Difficulty d
+    on c.difficulty_level=d.difficulty_level
+),
+full_score_sub as
+(
+    select s.hacker_id, count(*) as cnt
+    from Submissions s inner join challege_score a
+    on (s.challenge_id=a.challenge_id and s.score=a.score)
+    group by s.hacker_id
+    having count(*) > 1
+),
+last_one as
+(
+    select h.hacker_id, h.name, f.cnt
+    from Hackers h inner join full_score_sub f
+    on ( h.hacker_id=f.hacker_id )
+)
+
+select l.hacker_id, l.name
+from last_one l
+order by l.cnt desc, l.hacker_id asc
+
+
+# wos 18
+
+select round(max(LAT_N)-min(LAT_N)+max( LONG_W )-min(LONG_W),4)
+from STATION
+
+# wos 19
+
+select 
+round( sqrt(
+(max(LAT_N)-min(LAT_N))*(max(LAT_N)-min(LAT_N))+
+(max(LONG_W)-min(LONG_W))*(max(LONG_W)-min(LONG_W)) 
+) , 4)
+from STATION
+
+# wos 20
+
+WITH ASCT AS
+(
+    SELECT LAT_N , RANK() OVER ( ORDER BY (LAT_N ) ASC ) AS ARANK
+    FROM STATION
+),
+DEST AS
+(
+    SELECT LAT_N , RANK() OVER ( ORDER BY (LAT_N) DESC ) AS DRANK
+    FROM STATION
+)
+
+SELECT ROUND(ASCT.LAT_N, 4)
+FROM ASCT INNER JOIN DEST ON ASCT.LAT_N=DEST.LAT_N
+WHERE ASCT.ARANK=DEST.DRANK
