@@ -673,3 +673,65 @@ on s.user_id=r.user_id
 
 
 ------------------------------------Hackerrank---------------------------------
+
+# draw the triangle 2
+
+DELIMITER $$
+
+CREATE PROCEDURE P(R int, x int) 
+BEGIN
+   WHILE x<=R DO
+       SELECT REPEAT("* ", x);
+       set x=x+1;
+   END WHILE;
+END$$
+
+CREATE PROCEDURE QQ(R int, x int) 
+BEGIN
+   WHILE x<=R DO
+       SELECT REPEAT("$ ", x);
+       set x=x+1;
+   END WHILE;
+END$$
+
+DELIMITER ;
+
+CALL P(20,1);
+
+# interviews
+
+with aha as
+(
+    select c.contest_id, n.challenge_id
+    from Colleges c inner join Challenges n
+    on c.college_id=n.college_id
+)
+,
+Stat as
+(
+    select c.contest_id, sum( v.total_views ) as totv,
+    sum( total_unique_views ) as uv
+    from View_Stats v inner join aha c
+    on v.challenge_id=c.challenge_id
+    group by c.contest_id
+),
+Sub as
+(
+    select c.contest_id, sum(total_submissions) as totsub,
+    sum(total_accepted_submissions) as ac
+    from aha c inner join Submission_Stats s
+    on c.challenge_id=s.challenge_id
+    group by c.contest_id
+),
+Combi as
+(
+    select s.contest_id, s.totv, s.uv, b.totsub, b.ac
+    from Stat s inner join Sub b
+    on s.contest_id=b.contest_id
+    where s.totv+s.uv+b.totsub+b.ac>0
+)
+
+select c.contest_id, t.hacker_id, t.name, c.totsub, c.ac, c.totv, c.uv
+from Combi c inner join Contests t
+on c.contest_id=t.contest_id
+order by c.contest_id
