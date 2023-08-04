@@ -295,6 +295,56 @@ select
 from lft, rit
 
 
+# 608
+
+select t.id, 
+(
+    case
+    when t.p_id is null then "Root"
+    when t.id in ( select a.p_id from Tree a ) then "Inner"
+    else "Leaf"
+    end 
+) type
+from Tree as t
+
+# 626
+
+with por as
+(
+    select s.id, t.student
+    from Seat s left join Seat t
+    on s.id+1=t.id
+),
+age as
+(
+    select s.id, t.student
+    from Seat s left join Seat t
+    on s.id-1=t.id
+),
+mix as
+(
+    select p.id,
+    (
+        case 
+        when p.id%2=1 then p.student
+        else a.student
+        end
+    ) student
+    from por p inner join age a
+    on p.id=a.id
+)
+
+select m.id,
+(
+    case
+    when m.student is null then s.student
+    else m.student
+    end
+) student
+from mix m inner join Seat s
+on m.id=s.id
+
+
 
 # 1045
 
@@ -308,6 +358,20 @@ select c.customer_id
 from Customer c, aha a
 group by c.customer_id
 having count(distinct c.product_key )=min(a.cnt)
+
+
+# 1070
+
+with aha as
+(
+    select s.product_id, min( s.year ) as first_year
+    from Sales s
+    group by s.product_id
+)
+
+select s.product_id, aha.first_year, s.quantity, s.price
+from Sales s inner join aha 
+on (s.year=aha.first_year and s.product_id=aha.product_id)
 
 
 # 1158
@@ -522,6 +586,90 @@ ses as
 
 select ses.name as results
 from ses
+
+
+# 1393
+
+with aha as
+(
+    select s.stock_name, s.operation, sum( s.price ) kan
+    from Stocks s
+    group by s.stock_name, s.operation
+),
+abar as
+(
+    select a.stock_name, a.kan buy, b.kan sell
+    from aha a inner join aha b
+    on a.stock_name=b.stock_name 
+    where (a.operation='Buy' and  b.operation='Sell')
+)
+
+select a.stock_name, ( a.sell - a.buy ) as "capital_gain_loss"
+from abar a
+
+
+# 1907
+
+
+with aha as
+(
+    select a.account_id,
+    (
+        case
+        when a.income < 20000 then "Low Salary"
+        when a.income > 50000 then "High Salary"
+        else "Average Salary"
+        end
+    ) as category
+    from Accounts a
+)
+
+(select "Low Salary" as category, count( distinct a.account_id ) as accounts_count
+from aha a
+where a.category= "Low Salary" )
+union
+(select "Average Salary" as category, count( distinct a.account_id ) as accounts_count
+from aha a
+where a.category= "Average Salary" )
+union
+(select "High Salary" as category, count( distinct a.account_id ) as accounts_count
+from aha a
+where a.category= "High Salary" )
+
+
+# 1934
+
+with req as
+(
+    select c.user_id, count(*) as cnt
+    from Confirmations c
+    group by c.user_id
+),
+conf as
+(
+    select c.user_id, count(*) as cnt
+    from Confirmations c
+    where c.action="confirmed"
+    group by c.user_id
+),
+rate as
+(
+    select r.user_id, round(c.cnt/r.cnt, 2) as rate
+    from req r inner join conf c
+    on r.user_id=c.user_id
+)
+
+select s.user_id,
+(
+    case 
+    when r.rate is null then 0
+    else r.rate
+    end
+)as confirmation_rate
+from Signups s left join rate r
+on s.user_id=r.user_id
+
+
 
 
 ------------------------------------Hackerrank---------------------------------
