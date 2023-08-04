@@ -1,6 +1,8 @@
 
 ---------------------------------------LEETCODE---------------------------------
 
+https://libaoj.in/LeetCode-Solutions/SQL/
+
 # 176
 
 with aha as

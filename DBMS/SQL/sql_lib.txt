@@ -247,5 +247,8 @@ date(string)
 datediff( end_date, begin_date )
 
 
+-- lead / lag
+
+
  
 
