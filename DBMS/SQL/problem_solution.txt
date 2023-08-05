@@ -688,6 +688,25 @@ end
 from BST
 order by node asc
 
+// alt 
+
+select a.N,
+(
+    case
+    when a.P is null then "Root"
+    when a.N in 
+    (
+    select b.N
+    from BST b left join BST c
+    on b.N=c.P
+    where c.N is null
+    ) then "Leaf"
+    else "Inner"
+    end
+)
+from BST a
+order by a.N
+
 # Challenges
 
 
@@ -830,25 +849,60 @@ order by c.contest_id
 # new companies
 
 
-select  c.company_code,c.founder,
-(select count(distinct lm.lead_manager_code ) from Lead_Manager as lm where lm.company_code=c.company_code ),
-(select count(distinct sm.senior_manager_code ) from Senior_Manager as sm where sm.company_code=c.company_code  ),
-(select count( distinct m.manager_code) from Manager as m where m.company_code=c.company_code  ),
-(select count(distinct e.employee_code) from Employee as e  where e.company_code=c.company_code  )
-from  Company as c order by c.company_code asc
+with clm as
+(
+    select lm.company_code, count( distinct lm.lead_manager_code ) clm
+    from Lead_Manager lm
+    group by lm.company_code
+),
+csm as
+(
+    select lm.company_code, count( distinct lm.senior_manager_code ) csm
+    from Senior_Manager lm
+    group by lm.company_code
+),
+man as
+(
+    select lm.company_code, count( distinct lm.manager_code ) man
+    from Manager lm
+    group by lm.company_code
+),
+emp as
+(
+    select lm.company_code, count( distinct lm.employee_code ) emp
+    from Employee lm
+    group by lm.company_code
+),
+mix as
+(
+    select clm.company_code code, clm.clm, csm.csm, man.man, emp.emp
+    from ((clm inner join csm on clm.company_code=csm.company_code) 
+    inner join man on clm.company_code=man.company_code) 
+    inner join emp on clm.company_code=emp.company_code
+)
+
+select c.company_code, c.founder, m.clm, m.csm, m.man, m.emp
+from mix m inner join Company c
+on c.company_code=m.code
+order by c.company_code
 
 
-# occupations
+# occupations (manual pivot)
 
+with aha as
+(
+    select name, occupation, 
+    row_number() over ( partition by occupation order by name ) rnum 
+    from occupations
+)
 
-select 
-max( case occupation when "Doctor" then aha.name else null end ),
-max( case occupation when "Professor" then aha.name else null end ),
-max( case occupation when "Singer" then aha.name else null end ),
-max( case occupation when "Actor" then aha.name else null end )
-from
-(select name, occupation, row_number() over ( partition by occupation order by name ) rnum from occupations) aha
-group by aha.rnum ;
+select  
+min( case when a.occupation="Doctor" then a.name else null end ),
+min( case when a.occupation="Professor" then a.name else null end ),
+min( case when a.occupation="Singer" then a.name else null end ),
+min( case when a.occupation="Actor" then a.name else null end )
+from aha a
+group by a.rnum;
 
 # ollivander's inventory
 
@@ -964,9 +1018,10 @@ order by a.X
 select CONCAT(Name,"(",left(Occupation,1),")")
 from OCCUPATIONS
 ORDER BY Name;
-select  "There are a total of",count(*), CONCAT(LOWER(Occupation),"s.")
-from OCCUPATIONS
-group by (Occupation)
+
+select  "There are a total of ",count(o.*), CONCAT(LOWER(o.Occupation),"s.")
+from OCCUPATIONS o
+group by (o.Occupation)
 ORDER BY COUNT(*);
 
 
@@ -1026,8 +1081,9 @@ order by l.cnt desc, l.hacker_id asc
 
 # wos 18
 
-select round(max(LAT_N)-min(LAT_N)+max( LONG_W )-min(LONG_W),4)
-from STATION
+select round(-min( LAT_N ) - min( LONG_W ) + max( LAT_N )  + max( LONG_W ), 4) 
+from STATION 
+
 
 # wos 19
 
@@ -1040,17 +1096,18 @@ from STATION
 
 # wos 20
 
-WITH ASCT AS
+with aha as
 (
-    SELECT LAT_N , RANK() OVER ( ORDER BY (LAT_N ) ASC ) AS ARANK
-    FROM STATION
+    select s.LAT_N, row_number() over ( order by s.LAT_N asc ) acend
+    from STATION s
 ),
-DEST AS
+abar as
 (
-    SELECT LAT_N , RANK() OVER ( ORDER BY (LAT_N) DESC ) AS DRANK
-    FROM STATION
+    select s.LAT_N, row_number() over ( order by s.LAT_N desc ) dcend
+    from STATION s
 )
 
-SELECT ROUND(ASCT.LAT_N, 4)
-FROM ASCT INNER JOIN DEST ON ASCT.LAT_N=DEST.LAT_N
-WHERE ASCT.ARANK=DEST.DRANK
+select round( a.LAT_N, 4 )
+from aha a inner join abar b
+on a.LAT_N=b.LAT_N
+where a.acend=b.dcend or a.acend+1=b.dcend
