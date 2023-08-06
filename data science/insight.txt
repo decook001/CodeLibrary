@@ -1,2 +1,4 @@
 https://www.hackerrank.com/domains/ai
 https://www.hackerearth.com/practice/machine-learning/prerequisites-of-machine-learning/basic-probability-models-and-rules/tutorial/
+https://www.coursera.org/specializations/deep-learning?
+https://www.coursera.org/specializations/machine-learning-introduction?
