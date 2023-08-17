@@ -1,1 +1,2 @@
 mongosh "mongodb+srv://cluster0.whoqrkt.mongodb.net/" --username shoaib326
+(compass) mongodb+srv://shoaib326:<password>@cluster0.whoqrkt.mongodb.net/
