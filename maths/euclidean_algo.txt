@@ -1,3 +1,4 @@
+/*
 Required theories
 where a,b,c,x is in Z
 1. a===c (mod b) <-> a-c=bx <-> b|(a-c)  
@@ -8,7 +9,6 @@ Euclidean theorem says
 4. a-c=bx <-> a===c (mod b) ->  gcd(a,b)=gcd(b,c)
 
 proof:
-
 let gcd(a,b) = g1, gcd(b,c)=g2
 
 step 1:
@@ -29,12 +29,10 @@ step 3:
 -> g1=g2=gcd(a,b,c)
 -> gcd(a,b)=gcd(b,c) 
 
-
 Extended Euclidean theorem
 
 There is some x,y in Z for which gcd(a,b)=ax+by
-
-
+https://www.youtube.com/watch?v=hB34-GSDT3k
 
 Related-
 
@@ -48,9 +46,23 @@ gcd(a,b)=gcd(b,c)
 -> gcd( gcd(a,b), gcd(b,c) ) = gcd(a,b) (from 2)
 -> gcd( a,b,c ) = gcd(a,b)
 
-
-
-
 resources - 
 https://www.whitman.edu/mathematics/higher_math_online/section03.03.html
 https://www.youtube.com/watch?v=cOwyHTiW4KE
+*/
+
+int exuclid( int a, int b, int& x, int& y )
+{
+    // ret=ax+by
+    if(b==0)
+    {
+        x=1;
+        y=0;
+        return a;
+    }
+    int g=exuclid( b, a%b, x, y );
+    int tmp=y;
+    y=x-(a/b)*y;
+    x=tmp;
+    return g;   //   g=ax+by
+}
