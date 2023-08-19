@@ -25,29 +25,34 @@ x'=x+k*lcm(a,b)
 y'=y-k*lcm(a,b)
 */
 
-int exuclid( int a, int b, int& x, int& y )
+struct Diophantine
 {
-    // ret=ax+by
-    if(b==0)
+    int exuclid( int a, int b, int& x, int& y )
     {
-        x=1;
-        y=0;
-        return a;
+        // ret=ax+by
+        if(b==0)
+        {
+            x=1;
+            y=0;
+            return a;
+        }
+        int g=exuclid( b, a%b, x, y );
+        int tmp=y;
+        y=x-(a/b)*y;
+        x=tmp;
+        return g;   //   g=ax+by
     }
-    int g=exuclid( b, a%b, x, y );
-    int tmp=y;
-    y=x-(a/b)*y;
-    x=tmp;
-    return g;   //   g=ax+by
-}
+    
+    
+    int diophantine( int a, int& x, int b, int& y, int c )
+    {
+        int g=exuclid( a,b , x, y );
+        if( c%g ) return 0;
+        c/=g;
+        x*=c;
+        y*=c;
+        return 1;
+    }
+    
+};
 
-
-int diophantine( int a, int& x, int b, int& y, int c )
-{
-    int g=exuclid( a,b , x, y );
-    if( c%g ) return 0;
-    c/=g;
-    x*=c;
-    y*=c;
-    return 1;
-}
