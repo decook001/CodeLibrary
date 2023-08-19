@@ -51,18 +51,39 @@ https://www.whitman.edu/mathematics/higher_math_online/section03.03.html
 https://www.youtube.com/watch?v=cOwyHTiW4KE
 */
 
-int exuclid( int a, int b, int& x, int& y )
+struct Euclid
 {
-    // ret=ax+by
-    if(b==0)
+
+    int gcd( int x, int y)
     {
-        x=1;
-        y=0;
-        return a;
+        x=abs(x);
+        y=abs(y);
+        return y?gcd(y, x%y):x;
     }
-    int g=exuclid( b, a%b, x, y );
-    int tmp=y;
-    y=x-(a/b)*y;
-    x=tmp;
-    return g;   //   g=ax+by
-}
+
+    int lcm( int x, int y)
+    {
+        x=abs(x);
+        y=abs(y);
+        if(!x && !y) return 0;
+        if( !x || !y ) return max( x,y );
+        return x/gcd(x,y)*y;
+    }
+      
+    int exuclid( int a, int b, int& x, int& y )
+    {
+        // ret=ax+by
+        if(b==0)
+        {
+            x=1;
+            y=0;
+            return a;
+        }
+        int g=exuclid( b, a%b, x, y );
+        int tmp=y;
+        y=x-(a/b)*y;
+        x=tmp;
+        return g;   //   g=ax+by
+    }
+  
+};
