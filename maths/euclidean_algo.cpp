@@ -49,6 +49,7 @@ gcd(a,b)=gcd(b,c)
 resources - 
 https://www.whitman.edu/mathematics/higher_math_online/section03.03.html
 https://www.youtube.com/watch?v=cOwyHTiW4KE
+https://www.youtube.com/watch?v=hf-PRdtzqTY
 */
 
 struct Euclid
