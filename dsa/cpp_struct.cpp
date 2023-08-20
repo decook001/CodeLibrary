@@ -3,22 +3,19 @@ struct Pos
 
     int x,y;
 
-    Pos()
-    {
-        x=0;
-        y=0;
-    }
-
-    Pos(int a, int b)
-    {
-        x=a;
-        y=b;
-    }
+    Pos() { x=0; y=0; }
+    Pos(int a, int b) { x=a; y=b; }
 
     Pos(const Pos& a)
     {
         x=a.x;
         y=a.y;
+    }
+
+    Pos operator = ( Pos dan )  
+    {
+        x.dan.x;
+        y=dan.y;
     }
 
     Pos(char c)
