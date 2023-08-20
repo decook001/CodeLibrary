@@ -1,4 +1,3 @@
-
 struct Pos
 {
 
@@ -67,8 +66,7 @@ struct Pos
 
     bool operator < (Pos dan )
     {
-        if(x==dan.x)return y<dan.y;
-        return x<dan.x;
+        return y<dan.y;
     }
 
     void print()
@@ -77,5 +75,4 @@ struct Pos
     }
 
 };
-
 
