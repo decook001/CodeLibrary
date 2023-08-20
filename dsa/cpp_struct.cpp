@@ -14,7 +14,7 @@ struct Pos
 
     Pos operator = ( Pos dan )  
     {
-        x.dan.x;
+        x=dan.x;
         y=dan.y;
     }
 
