@@ -208,3 +208,178 @@ db.restaurants.aggregate([ { $match: { "grades.grade": "A" }}, { $group: { _id: 
 db.restaurants.aggregate([ { $unwind: "$grades" }, { $project: { month: { $month: { $toDate: "$grades.date" } }, year: { $year: { $toDate: "$grades.date" } } }}, { $group: { _id: { month: "$month", year: "$year" }, count: { $sum: 1 } }}, { $sort: { "_id.year": 1, "_id.month": 1 } }  ]);
 
 db.restaurants.aggregate([ { $unwind: "$grades" }, { $project: { res_id: "$restaurant_id",  month: { $month: { $toDate: "$grades.date" } }, year: { $year: { $toDate: "$grades.date" } } }}, { $group: { _id: { res_id: "$restaurant_id" } , count: { $sum: 1 } } } ]);
+
+
+#61
+db.restaurants.aggregate([   {   $unwind: "$grades" }, { $group: { _id: "$cuisine", avgScore: { $avg: "$grades.score" } }} ])
+
+
+#62
+db.restaurants.aggregate([   {   $unwind: "$grades" }, { $group: { _id: "$cuisine", maxScore: { $max: "$grades.score" } }} ])
+
+
+#63
+db.restaurants.aggregate([   {   $unwind: "$grades" }, { $group: { _id: "$cuisine", minScore: { $min: "$grades.score" } }} ])
+
+
+#64
+db.restaurants.aggregate([   {   $unwind: "$grades" }, { $group: { _id: "$borough", avgScore: { $avg: "$grades.score" } }} ])
+
+
+#65
+db.restaurants.aggregate([   {   $unwind: "$grades" }, { $group: { _id: "$borough", maxScore: { $max: "$grades.score" } }} ])
+
+
+#66
+db.restaurants.aggregate([   {   $unwind: "$grades" }, { $group: { _id: "$borough", minScore: { $min: "$grades.score" } }} ])
+
+
+#67
+db.restaurants.find({ "grades": {"$elemMatch": { "date": {"$eq": ISODate("2013-07-22T00:00:00Z") }, "grade": {"$eq": "A"}} } }, { "name": 1, "address": 1, "_id": 0 })
+
+
+#68
+db.restaurants.find({ "grades": {"$elemMatch": { "date": {"$eq": ISODate("2013-07-22T00:00:00Z") }, "grade": {"$in": ["B", "C"]  }} } }, { "name": 1, "address": 1, "_id": 0 })
+
+
+#69
+db.restaurants.find({ $and: [ { "grades.grade": "A" }, { "grades.grade": "B" } ]}, { name: 1, address: 1, _id: 0 })
+
+
+#70
+db.restaurants.find({ $and: [ { "grades.grade": "A" }, {$nor :[{ "grades.grade": "B" }] } ]}, { name: 1, address: 1, _id: 0 })
+
+
+#71
+db.restaurants.find({ $and: [ { "grades.grade": "A" }, {$nor :[{ "grades.grade": "C" }] } ]}, { name: 1, address: 1, _id: 0 })
+
+#72
+db.restaurants.find({ $and: [ { "grades.grade": "A" }, {$nor :[{ "grades.grade": "C" }, { "grades.grade": "B" }  ] } ]}, { name: 1, address: 1, _id: 0, grades: 1 })
+
+#73
+db.restaurants.find({ name: { $regex: /coffee/i } }, { name: 1, address: 1 })
+
+#74
+db.restaurants.find({ "address.zipcode" : { $regex: /^10/ } }, { name: 1, address: 1 })
+
+#75
+db.restaurants.find({ cuisine: { $regex: /^B/i } }, { name: 1, address: 1 })
+
+#76
+db.restaurants.find({ cuisine: { $regex: /y$/i } }, { name: 1, address: 1, cuisine: 1 })
+
+#77
+db.restaurants.find({ cuisine: { $regex: /pizza/i } }, { name: 1, address: 1, cuisine: 1 })
+
+#78
+db.restaurants.aggregate([ {$unwind: "$grades"}, {$group: {_id: "$restaurant_id", avgScore: {$avg: "$grades.score"} }}, {$sort: {avgScore: -1}}, {$limit: 1} ])
+
+#79
+db.restaurants.aggregate([ {$unwind: "$grades"}, {$match: {"grades.grade": "A"}}, {$group: { _id: "$restaurant_id", count: {$sum: 1} }}, {$sort: {count: -1}}, {$group: { _id: "$count", restaurants: {$push: "$_id"} }}, {$sort: {_id: -1}}, {$limit: 1}, {$project: {restaurants: 1}} ])
+
+#80
+db.restaurants.aggregate([ {$unwind: "$grades"}, {$match: {"grades.grade": "C"}}, {$group: {_id: "$cuisine", count: {$sum: 1}}}, {$sort: {count: -1}} ])
+
+#81
+db.restaurants.aggregate([ {$match: {"cuisine": "Turkish"}}, {$unwind: "$grades"},  {$group: {_id: "$restaurant_id", avgScore: {$avg: "$grades.score"} }}, {$group: { _id: "$avgScore", restaurants: {$push: "$_id"} }}, {$sort: {_id: -1}}, {$limit: 1} ])
+
+#82
+db.restaurants.aggregate([  {$unwind: "$grades"},  {$group: {_id: "$restaurant_id", totScore: {$sum: "$grades.score"} }}, {$group: { _id: "$totScore", restaurants: {$push: "$_id"} }}, {$sort: {_id: -1}}, {$limit: 1} ])
+
+#83
+db.restaurants.find( {$and: [ { cuisine: "Chinese" }, {borough: "Brooklyn"} ]} )
+
+#84
+db.restaurants.aggregate([ { $unwind: "$grades" }, { $sort: { "grades.date": -1 } }, { $limit: 1 }, { $project: { name: 1, "grades.date": 1, _id: 0 } } ])
+
+#85
+db.restaurants.aggregate([  {$unwind: "$grades"},  {$group: { _id: { cuisine: "$cuisine", restaurant_id: "$restaurant_id" }, avgScore: {$avg: "$grades.score" } }},  {$sort: { avgScore: -1 }},  {$group: { _id: "$_id.cuisine", topRestaurants: {$push: {restaurant_id: "$_id.restaurant_id", avgScore: "$avgScore"}} }}, {$project: { _id: 0, cuisine: "$_id", topRestaurants: {$slice: ["$topRestaurants", 5]} }}, {$sort : {cuisine:1}} ])
+
+#86
+db.restaurants.aggregate([  {$unwind: "$grades"},  {$match: {"grades.grade": "A"}},  {$group: {  _id: {borough: "$borough", restaurant_id: "$restaurant_id"}, gradeCount: {$sum: 1}  }},  {$sort: { gradeCount: -1  }},  {$group: {    _id: "$_id.borough", topRestaurants: {$push: {restaurant_id: "$_id.restaurant_id", gradeCount: "$gradeCount"}}  }},  {$project: {    _id: 0, borough: "$_id", topRestaurants: {$slice: ["$topRestaurants", 5]}  }} ])
+
+
+#87
+db.restaurants.aggregate([ {$match: {$and:[ {"grades.grade": "A"}, {"grades.score": { $gte: 90 } } ]} }, {$group : {_id: borough, cnt : {$sum:1} } }, {$sort: {cnt:-1}} , {$limit: 1}  ])
+
+
+
+--  sample_mflix/movies
+
+
+#1 
+db.movies.find( { year: 1893 } )
+
+#2
+db.movies.find( { runtime: {$gt : 120 }} )
+
+#3
+db.movies.find({ genres : "Short" })
+
+#4
+db.movies.find({ directors: "William K.L. Dickson" })
+
+#5
+db.movies.find({ countries : "USA" })
+
+#6
+db.movies.find({ rated: {$regex: /unrated/i } })
+
+#7
+db.movies.find({ "imdb.votes" : {$gt: 1000} }).sort({"imdb.votes": -1})
+
+#8
+db.movies.find({ "imdb.rating" : {$gt: 7} })
+
+#9
+db.movies.find({ "tomatoes.rating" : {$gt: 7} })
+
+#10
+db.movies.find({ "tomatoes.viewer.rating" : {$gt: 4} })
+
+#11
+db.movies.find({ "awards.wins" : {$gt: 0 } })
+
+#12
+db.movies.find({ "cast" : { $regex: /Charles Kayser/i } })
+
+#13
+db.movies.find({ released: ISODate("1893-05-09T00:00:00.000Z") })
+
+#14
+db.movies.find({ title: { $regex: /scene/i } })
+
+#15
+db.movies.find({ "tomatoes.viewer.rating": { $lt: 4, $gte: 3 } } )
+
+#16
+db.movies.find({ year : { $lt : 1900 } })
+
+#17
+db.movies.find({ fullplot : { $regex : /fire/i } } )
+
+#18
+db.movies.find({ plot : { $regex : /beer/i } } )
+
+#19
+db.movies.find({ fullplot : { $regex : /metal/i } }, { title:1 , languages: 1, fullplot: 1, released: 1, directors: 1, writers: 1, countries: 1, _id: 0})
+
+#20
+db.movies.find({ runtime : { $gte: 60, $lte:90 } }, { title:1 , languages: 1, fullplot: 1, released: 1, directors: 1, writers: 1, countries: 1, _id: 0})
+
+#21
+db.movies.find({}, { title: 1, languages: 1, released: 1, runtime: 1, directors: 1, writers: 1, countries: 1, imdb: 1 }).sort({ "imdb.rating" : -1 }).limit(5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
