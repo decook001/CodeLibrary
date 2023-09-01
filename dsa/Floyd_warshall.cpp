@@ -5,6 +5,9 @@
 // can detect negative cycle by negative self distance
 // works on undirected graph
 
+#include<bits/stdc++.h>
+using namespace std;
+
 struct Edge
 {
     int src, des, wt;
