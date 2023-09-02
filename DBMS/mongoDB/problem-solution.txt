@@ -1,5 +1,7 @@
 
 https://www.w3resource.com/mongodb-exercises/#MongoDB_restaurants
+
+
 -- sample_restaurants/restaurants --
 
 #1
@@ -376,6 +378,310 @@ db.movies.aggregate([ {$unwind : "$countries"}  , { $match: { type: 'movie' } },
 
 
 #23
+db.movies.aggregate([ {$unwind : "$genres"}  , { $group: {  _id: '$genres' , cnt: { $sum: 1 } }}, {$sort: { cnt : -1 } },  {$limit: 1}, {$project : { genre: "$_id", count: "$cnt", _id:0 } } ])
+
+#24
+db.movies.aggregate([ { $group: {  _id: '$year' , avgRating: { $avg: "$imdb.rating" }, movies : {$push: "$title"} }},  {$group : {_id: "$avgRating", mov: {$push: "$movies" }}  }, {$sort: {_id:-1} }, {$limit: 1}, {$unwind: "$mov"  }, {$unwind: "$mov"  }, {$project:  { _id:0, title: "$mov" }  }  ])
+
+#25
+db.movies.aggregate([ {$unwind : "$directors"},  { $group: {  _id: '$directors' , cnt: { $sum: 1 } } }, {$sort: {cnt:-1}  }, {$limit :10}, {$project: { director:"$_id", movies:"$cnt", _id:0  } }   ])
+
+#26
+db.movies.aggregate([ { $group: {_id: "$rated", avg : {$avg : "$imdb.rating" } } } ])
+
+#27
+db.movies.aggregate([ { $match: { "awards.wins": { $gt: 0 }  }  }, {$sort : { year: 1 } }, {$limit: 1}  ])
+
+#28
+db.movies.aggregate([ { $project: { _id: 0, title: 1, imdbRating: "$imdb.rating", tomatoViewerRating: "$tomatoes.viewer.rating" } }, {  $sort: { imdbRating: -1, tomatoViewerRating: -1 } }, { $limit: 1 } ])
+
+
+
+-- sample_airbnb/listingsAndReviews
+
+#1
+db.listingsAndReviews.aggregate([ { $limit: 1 }, { $project: { price: 1, _id: 0 } } ])
+
+#2
+db.listingsAndReviews.aggregate([ { $limit: 1 }, { $project: { cleaning_fee: 1, _id: 0 } } ])
+
+#3
+db.listingsAndReviews.aggregate([ { $limit: 1 }, { $project: { "host.host_name" : 1, "host.host_location": 1, "host.host_about":1,  _id: 0 } } ])
+
+#4
+db.listingsAndReviews.aggregate([ { $limit: 1 }, { $project: { bedrooms: 1 } } ])
+
+#5
+db.listingsAndReviews.aggregate([ { $limit: 1 }, { $project: { guests: 1 } } ])
+
+#6
+db.listingsAndReviews.findOne({}, {"host.host_has_profile_pic": 1})
+
+#7
+db.listingsAndReviews.findOne({}, {"host.host_identity_verified": 1})
+
+#8
+db.listingsAndReviews.aggregate([ { $project: { host_listings_count: "$host.host_listings_count" } }, { $limit: 1 } ])
+
+#9
+db.listingsAndReviews.findOne({}, {"address.street": 1})
+
+#10
+db.listingsAndReviews.find({ property_type: "House" })
+
+#11
+db.listingsAndReviews.find(
+  {
+price: { $gt: 500 }
+  },
+  {
+listing_url: 1,
+name: 1,
+    "host.host_name": 1,
+    "host.host_location": 1,
+    "reviews.reviewer_name": 1,
+price: 1,
+    _id: 0
+  }
+)
+
+#12
+db.listingsAndReviews.find(
+    {
+        "address.country": "Brazil",
+        "review_scores.review_scores_rating": { $gte: 9 }
+    },
+    {
+        "name": 1,
+        "address": 1,
+        "review_scores.review_scores_rating": 1,
+        "_id": 0
+    }
+)
+
+
+#13
+db.listingsAndReviews.find
+(
+    {
+        "address.country": "United States",
+        "amenities": "Hot tub",
+        "name": { "$exists": true },
+        "address": { "$exists": true },
+        "reviews.reviewer_name": { "$exists": true },
+        "review_scores.review_scores_rating": { "$exists": true }
+    },
+    {
+        "name": 1,
+        "address": 1,
+        "reviews.reviewer_name": 1,
+        "review_scores.review_scores_rating": 1
+    }
+)
+
+#14
+db.listingsAndReviews.find({
+amenities: "Pool",
+price: {
+    $gte: 200,
+    $lte: 400},
+
+        "name": { "$exists": true },
+        "amenities": { "$exists": true },
+        "review_scores.review_scores_rating": { "$exists": true }
+  
+},
+{
+name: 1,
+amenities: 1,
+price: 1,
+  _id: 0
+})
+
+#15
+db.listingsAndReviews.find
+( { $and : [ { amenities: "Washer"}, { $or:[ { "address.country": "Canada" }, { "address.country": "Mexico" } ] } ] },
+{ name: 1, amenities: 1, address: 1, _id: 0 }) 
+
+#16
+db.listingsAndReviews.aggregate([
+{$unwind : "$reviews"},
+  { $group: {
+      _id: {
+listing_url: "$listing_url",
+name: "$name",
+country: "$address.country",
+review_scores: "$review_scores",
+      },
+count: { $sum: 1 },
+    },
+  },
+  {
+    $sort: { count: -1 },
+  },
+  {
+    $limit: 10,
+  },
+  {
+    $project: {
+      _id: 0,
+listing_url: "$_id.listing_url",
+name: "$_id.name",
+country: "$_id.country",
+review_scores: "$_id.review_scores",
+count: 1,
+    },
+  },
+]);
+
+
+#17
+db.listingsAndReviews.find({
+  "amenities": { $regex:  / fireplace /i } ,
+  "review_scores.review_scores_rating": { $gte: 8 }
+}, {
+  "listing_url": 1,
+  "name": 1,
+  "address": 1,
+  "review_scores": 1,
+  "_id": 0
+})
+
+#18
+db.listingsAndReviews.aggregate([ { $match: { $and : [ { amenities: "Washer" },  { $or : [ { "address.country": "Italy" }, { "address.country" : "Spain" } ] } ]  } }, { $project :  { listing_url:1 , name: 1, address: 1, amenities:1 } } ])
+
+#19
+db.listingsAndReviews.find(
+{ "price": { "$exists": true } },
+{ "listing_url": 1, "name": 1, "address": 1, "amenities": 1, "price": 1, "review_scores": 1 }
+).sort({ "price": -1 }).limit(1)
+
+#20
+db.listingsAndReviews.find(
+{ "price": { "$exists": true } },
+{ "listing_url": 1, "name": 1, "address": 1, "amenities": 1, "price": 1, "review_scores": 1 }
+).sort({ "price": 1 }).limit(1)
+
+#21
+db.listingsAndReviews.find(
+{ "number_of_reviews": 0},
+{ "listing_url": 1, "name": 1, "address": 1, "amenities": 1, "price": 1, "review_scores": 1 } )
+
+
+#22
+db.listingsAndReviews.find(
+{ "host.host_is_super_host": 0},
+{ "listing_url": 1, "name": 1, "address": 1, "amenities": 1, "price": 1, "review_scores": 1 } )
+
+
+#23
+db.listingsAndReviews.aggregate( [ { $unwind: "$address.location.coordinates" }, { $group: { _id: "$_id", cnt:{ $sum: 1 }, name: {$push :"$name" } } }, {$match : { cnt: {$ne: 0}  }  } ] )
+
+#24
+db.listingsAndReviews.find
+(
+{ "beds": { $gte: 2 } },
+{ "name": 1, "address": 1, "host": 1, "bed_type": 1, "beds": 1, "review_scores.review_scores_rating": 1 }
+)
+
+#25
+db.listingsAndReviews.find(
+{ "host.host_name": { $regex: /Livia/i } },
+{ name: 1, address: 1, host: 1 }
+)
+
+#26
+db.listingsAndReviews.find(
+{ "host.host_location": { $regex: /brazil/i } },
+{ name: 1, address: 1, host: 1 }
+)
+
+
+#27
+db.listingsAndReviews.find(
+{ "availability.availability_365": { $gt: 300 } },
+{ name: 1, address: 1, host: 1, availability: 1 }
+)
+
+
+#28
+db.listingsAndReviews.find(
+{ bedrooms: 1 },
+{ listing_url: 1, name: 1, bedrooms: 1, price: 1 }
+)
+
+
+#29
+db.listingsAndReviews.find(
+{ cleaning_fee: { $ne: null } },
+{ listing_url: 1, name: 1, bedrooms: 1, cleaning_fee:1,  price: 1 }
+)
+
+
+#30
+db.listingsAndReviews.find(
+{ price: { $gte: 600, $lte: 900 } },
+{ listing_url: 1, name: 1, bedrooms: 1, price: 1 }
+)
+
+
+#31
+db.listingsAndReviews.find({
+  "host.host_verifications": "email"
+}, {
+listing_url: 1,
+name: 1,
+host: 1,
+price: 1
+})
+
+
+#32
+db.listingsAndReviews.find(
+   { 
+amenities: { $all: ["TV", "Wifi"] }
+   },
+   { 
+listing_url: 1,
+name: 1,
+amenities: 1,
+host: 1
+   }
+)
+
+
+#33
+db.listingsAndReviews.find({
+  "host.host_verifications": "jumio",
+  "host.host_about": { $exists: true, $ne: "" }
+},
+{
+  "listing_url": 1,
+  "name": 1,
+  "amenities": 1,
+  "host": 1
+})
+
+
+#34
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
