@@ -664,6 +664,263 @@ db.listingsAndReviews.find({
 
 
 #34
+db.listingsAndReviews.find({
+  "host.host_total_listings_count": { $gt: 1 }
+},
+{
+  "listing_url": 1,
+  "name": 1,
+  "host": 1,
+  "price": 1
+})
+
+
+#35
+db.listingsAndReviews.find({
+  "property_type": "Apartment",
+  "beds": { $gte: 2 }
+},
+{
+  "listing_url": 1,
+  "name": 1,
+  "property_type": 1,
+  "beds": 1,
+  "price": 1
+})
+
+
+#36
+db.listingsAndReviews.aggregate([
+  {
+    $match: {
+      bathrooms: { $gte: 2 }
+    }
+  },
+  {
+    $project: 
+{
+      listing_url: 1,
+      name: 1,
+      property_type: 1,
+      bed: 1,
+      bathrooms: 1,
+      price: 1
+    }
+  } 
+])
+
+
+#37
+db.listingsAndReviews.aggregate([
+  {
+    $match: {
+      guests_included: { $lte: 5 }
+    }
+  },
+  {
+    $project: {
+      listing_url: 1,
+      name: 1,
+      property_type: 1,
+      bed: 1,
+      price: 1,
+      guests_included: 1
+    }
+  }
+])
+
+
+#38
+db.listingsAndReviews.aggregate([
+  {
+    $match: {
+      price: { $gt: 500 },
+      security_deposit: { $gte: 1000 }
+    }
+  },
+  {
+    $project: {
+      listing_url: 1,
+      name: 1,
+      property_type: 1,
+      bed: 1,
+      price: 1,
+      security_deposit: 1
+    }
+  }
+])
+
+
+#39
+db.listingsAndReviews.aggregate([
+  {
+    $match: {
+      cancellation_policy: "flexible"
+    }
+  },
+  {
+    $project: {
+      listing_url: 1,
+      name: 1,
+      property_type: 1,
+      bed: 1,
+      price: 1,
+      cancellation_policy: 1
+    }
+  }
+])
+
+
+#40
+db.listingsAndReviews.aggregate([
+  {
+    $match: {
+      bed_type: "Real Bed",
+      amenities: "Kitchen"
+    }
+  },
+  {
+    $project: {
+      listing_url: 1,
+      name: 1,
+      property_type: 1,
+      bed_type: 1,
+      amenities: 1,
+      price: 1
+    }
+  }
+])
+
+#41
+db.listingsAndReviews.find(
+  {
+    "address.country": "Brazil",
+    "amenities": "24-hour check-in"
+  },
+  {
+    "listing_url": 1,
+    "name": 1,
+    "address": 1,
+    "amenities": 1
+  }
+)
+
+#42
+db.listingsAndReviews.find(
+  {
+    reviews: { $exists: true,  $size: 1 } 
+  },
+  {
+    listing_url: 1,
+    name: 1,
+    address: 1,
+    reviews: 1
+  }
+)
+
+#43
+db.listingsAndReviews.countDocuments({ "images.medium_url": "" });
+
+#44
+db.listingsAndReviews.find(
+{ "availability.availability_30": { $gte: 30 } }, 
+{ 
+listing_url: 1, 
+name: 1, 
+address: 1, 
+"availability.availability_30": 1 
+})
+
+#45
+db.listingsAndReviews.find(
+{ "address.suburb": "Lagoa" }, 
+{ listing_url: 1, name: 1, address: 1 }
+)
+
+#46
+db.listingsAndReviews.find(
+  {
+    "host.host_is_superhost": true,
+    "host.host_total_listings_count": { $gte: 2 }
+  },
+  {
+    listing_url: 1,
+    name: 1,
+    address: 1,
+    host: 1
+  }
+)
+
+#47
+db.listingsAndReviews.find(
+  {
+    "host.host_has_profile_pic": true,
+    "host.host_identity_verified": true
+  },
+  {
+    listing_url: 1,
+    name: 1,
+    address: 1,
+    host: 1
+  }
+)
+
+#48
+db.listingsAndReviews.aggregate([
+  {
+    $project: {
+      "listing_url": 1,
+      "name": 1,
+      "address": 1,
+      "host_verifications": "$host.host_verifications",
+      "host_verifications_count": { $size: "$host.host_verifications" }
+    }
+  }
+])
+
+#49
+
+db.listingsAndReviews.aggregate([
+  {
+    $match: {
+      "host.host_verifications": { $exists: true },
+      $expr: { $gte: [{ $size: "$host.host_verifications" }, 3] }
+    }
+  },
+  {
+    $project: {
+      "listing_url": 1,
+      "name": 1,
+      "address": 1,
+      "host.host_verifications": 1,
+      "host_verifications_count": { $size: "$host.host_verifications" }
+    }
+  }
+])
+
+
+#50
+
+db.listingsAndReviews.aggregate([ 
+{ 
+$match: { 
+"host.host_picture_url": { $exists: true, $ne: null }
+ } 
+}, 
+{ $project: { 
+listing_url: 1, 
+name: 1, 
+address: 1, "host.host_picture_url": 1 
+} 
+}
+])
+
+
+
+
+
+
+
 
 
 
