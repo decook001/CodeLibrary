@@ -1,10 +1,7 @@
-
-from django.shortcuts import render
+from homepage.base import *
 from .first_view import load_flw_from_month, load_flw_from_day, load_flw_to_year, load_flw_to_month, load_flw_to_day
-from accounts.models import City
+from homepage.models import City
 from residence.models import Residence
-from datetime import date
-from django.urls import path
 
 
 month_array = ['', 'January', 'February', 'March', 'April', 'May', 'June',

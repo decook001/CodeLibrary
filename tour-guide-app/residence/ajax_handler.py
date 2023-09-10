@@ -1,9 +1,6 @@
-
-from http.client import HTTPResponse
-from django.shortcuts import render
+from homepage.base import *
 from .views_1 import load_flw_from_month, load_flw_from_day, load_flw_to_year, load_flw_to_month, load_flw_to_day
-from accounts.models import City
-from django.urls import path
+from homepage.models import City
 
 
 month_array = ['', 'January', 'February', 'March', 'April', 'May', 'June',
@@ -85,7 +82,7 @@ def load_city(request):
 
 def book_space(request):
     print("book space")
-    return HTTPResponse('hi')
+    return HttpResponse('hi')
 
 
 urlpatterns = [

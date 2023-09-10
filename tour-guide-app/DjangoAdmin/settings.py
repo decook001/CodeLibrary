@@ -8,13 +8,9 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
-
 """
 
 import os
-
-print("hello from settings.py")
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,19 +31,23 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    
+    'blog.apps.BlogConfig',
     'accounts.apps.AccountsConfig',
+    'guide.apps.GuideConfig',
+    'homepage.apps.HomepageConfig',
     'residence.apps.ResidenceConfig',
-    'search.apps.SearchConfig',
+    'restaurant.apps.RestaurantConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'search.apps.SearchConfig',
     'ckeditor',
     'ckeditor_uploader',
     'hitcount',
+
     'crispy_forms'
 ]
 
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'DjangoAdmin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tour-guide-app',
+        'NAME': 'project_350',
         'USER': 'postgres',
         'PASSWORD': 'isthisyou',
         'HOST': 'localhost'
