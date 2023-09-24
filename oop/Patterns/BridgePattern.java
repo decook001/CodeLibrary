@@ -1,4 +1,6 @@
-package BridgePattern;
+
+
+// https://refactoring.guru/design-patterns/bridge
 
 public class Main
 {
@@ -11,7 +13,7 @@ public class Main
 
         remote.setDevice(tv);
 
-        remote.goURL("youtube.com");
+        remote.previousChannel();
 
 
     }
@@ -29,6 +31,43 @@ interface Device {
     void setChannel(int channel);
 }
 
+class Remote {
+    Device Device;
+
+    void setDevice(Device device)
+    {
+        Device=device;
+    }
+
+    void togglePower()
+    {
+        if(Device.isOn())Device.setOff();
+        else Device.setOn();
+    }
+
+    void upVolume()
+    {
+        if(Device.getVolume()<100)Device.setVolume(Device.getVolume()+1);
+    }
+
+    void downVolume()
+    {
+        if(Device.getVolume()>0)Device.setVolume(Device.getVolume()-1);
+    }
+
+    void upChannel()
+    {
+        Device.setChannel( ( Device.getChannel()+1 ) % 101 );
+    }
+
+    void downChannel()
+    {
+        Device.setChannel( (Device.getChannel()-1+101) %101 );
+    }
+
+
+}
+
 class DigitalRemote extends Remote
 {
     private int Volume;
@@ -42,7 +81,32 @@ class DigitalRemote extends Remote
     {
         Device.setVolume(Volume);
     }
+}
 
+class SmartRemote extends Remote
+{
+    int prvChannel=0;
+    
+    @Override
+    void upChannel()
+    {
+        prvChannel = Device.getChannel();
+        Device.setChannel( ( +1 ) % 101 );
+    }
+    
+    @Override
+    void downChannel()
+    {
+        prvChannel = Device.getChannel();
+        Device.setChannel( (prvChannel-1+101) %101 );
+    }
+    
+    void previousChannel()
+    {
+        int cur = prvChannel;
+        prvChannel=Device.getChannel();
+        Device.setChannel(cur);
+    }
 }
 
 class Radio implements Device {
@@ -85,52 +149,6 @@ class Radio implements Device {
         Channel=channel;
     }
 
-}
-
-class Remote {
-    Device Device;
-
-    void setDevice(Device device)
-    {
-        Device=device;
-    }
-
-    void togglePower()
-    {
-        if(Device.isOn())Device.setOff();
-        else Device.setOn();
-    }
-
-    void upVolume()
-    {
-        if(Device.getVolume()<100)Device.setVolume(Device.getVolume()+1);
-    }
-
-    void downVolume()
-    {
-        if(Device.getVolume()>0)Device.setVolume(Device.getVolume()-1);
-    }
-
-    void upChannel()
-    {
-        Device.setVolume( ( Device.getVolume()+1 ) % 101 );
-    }
-
-    void downChannel()
-    {
-        Device.setVolume( (Device.getVolume()-1+101) %101 );
-    }
-
-
-}
-
-
-class SmartRemote extends Remote
-{
-    void goURL(String url)
-    {
-        System.out.println(url);
-    }
 }
 
 
