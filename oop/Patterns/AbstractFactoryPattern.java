@@ -129,4 +129,6 @@ class VictorianChair extends Chair
         System.out.println("victorian chair bought");
     }
 }
->>>>>>> 41ebdf2838b7a2cce9ea08a5f5f4e18ebec39a09:project/src/main/java/AbstractFactoryPattern/Main.java
+
+
+
