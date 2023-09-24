@@ -1,181 +1,99 @@
 
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Maven_java {
-        public static void main(String[] args) {
-        Editor editor = new Editor();
-        editor.init();
-    }
-}
 
-abstract class Command {
-    public Editor editor;
-    private String backup;
+public class CommandPattern
+{
+   
+   public static void main(String[] args) 
+   {
+      Stock abcStock = new Stock();
 
-    Command(Editor editor) {
-        this.editor = editor;
-    }
+      BuyStock buyStockOrder = new BuyStock(abcStock);
+      SellStock sellStockOrder = new SellStock(abcStock);
 
-    void backup() {
-        backup = editor.textField.getText();
-    }
+      Broker broker = new Broker();
+      broker.takeOrder(buyStockOrder);
+      broker.takeOrder(sellStockOrder);
 
-    public void undo() {
-        editor.textField.setText(backup);
-    }
-
-    public abstract boolean execute();
+      broker.placeOrders();
+   }
 }
 
 
-import java.util.Stack;
-
-class CommandHistory {
-    private Stack<Command> history = new Stack<>();
-
-    public void push(Command c) {
-        history.push(c);
-    }
-
-    public Command pop() {
-        return history.pop();
-    }
-
-    public boolean isEmpty() { return history.isEmpty(); }
-}
-
-class CopyCommand extends Command {
-
-    public CopyCommand(Editor editor) {
-        super(editor);
-    }
-
-    @Override
-    public boolean execute() {
-        editor.clipboard = editor.textField.getSelectedText();
-        return false;
-    }
+interface Order 
+{
+   void execute();
 }
 
 
-class CutCommand extends Command {
+public class Stock 
+{
+	
+   private String name = "ABC";
+   private int quantity = 10;
 
-    public CutCommand(Editor editor) {
-        super(editor);
-    }
+   public void buy()
+   {
+      System.out.println("Stock [ Name: "+name+",  Quantity: " + quantity +" ] bought");
+   }
+        
+   public void sell()
+   {
+      System.out.println("Stock [ Name: "+name+",  Quantity: " + quantity +" ] sold");
+   }
+}
 
-    @Override
-    public boolean execute() {
-        if (editor.textField.getSelectedText().isEmpty()) return false;
+public class BuyStock implements Order 
+{
+   private Stock abcStock;
 
-        backup();
-        String source = editor.textField.getText();
-        editor.clipboard = editor.textField.getSelectedText();
-        editor.textField.setText(cutString(source));
-        return true;
-    }
+   public BuyStock(Stock abcStock)
+   {
+      this.abcStock = abcStock;
+   }
 
-    private String cutString(String source) {
-        String start = source.substring(0, editor.textField.getSelectionStart());
-        String end = source.substring(editor.textField.getSelectionEnd());
-        return start + end;
-    }
+   public void execute() 
+   {
+      abcStock.buy();
+   }
+}
+
+public class SellStock implements Order 
+{
+   private Stock abcStock;
+
+   public SellStock(Stock abcStock)
+   {
+      this.abcStock = abcStock;
+   }
+
+   public void execute() 
+   {
+      abcStock.sell();
+   }
 }
 
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+public class Broker 
+{
+   private List<Order> orderList = new ArrayList<Order>();
 
-class Editor {
-    public JTextArea textField;
-    public String clipboard;
-    private CommandHistory history = new CommandHistory();
+   public void takeOrder(Order order)
+   {
+      orderList.add(order);		
+   }
 
-    public void init() {
-        JFrame frame = new JFrame("Text editor (type & use buttons, Luke!)");
-        JPanel content = new JPanel();
-        frame.setContentPane(content);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        textField = new JTextArea();
-        textField.setLineWrap(true);
-        content.add(textField);
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton ctrlC = new JButton("Ctrl+C");
-        JButton ctrlX = new JButton("Ctrl+X");
-        JButton ctrlV = new JButton("Ctrl+V");
-        JButton ctrlZ = new JButton("Ctrl+Z");
-        Editor editor = this;
-        ctrlC.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                executeCommand(new CopyCommand(editor));
-            }
-        });
-        ctrlX.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                executeCommand(new CutCommand(editor));
-            }
-        });
-        ctrlV.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                executeCommand(new PasteCommand(editor));
-            }
-        });
-        ctrlZ.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                undo();
-            }
-        });
-        buttons.add(ctrlC);
-        buttons.add(ctrlX);
-        buttons.add(ctrlV);
-        buttons.add(ctrlZ);
-        content.add(buttons);
-        frame.setSize(450, 200);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
-    private void executeCommand(Command command) {
-        if (command.execute()) {
-            history.push(command);
-        }
-    }
-
-    private void undo() {
-        if (history.isEmpty()) return;
-
-        Command command = history.pop();
-        if (command != null) {
-            command.undo();
-        }
-    }
-
-    public class events {
-
-        public events() {
-        }
-    }
+   public void placeOrders()
+   {
+   
+      for (Order order : orderList) 
+      {
+         order.execute();
+      }
+      orderList.clear();
+   }
 }
 
-class PasteCommand extends Command {
 
-    public PasteCommand(Editor editor) {
-        super(editor);
-    }
-
-    @Override
-    public boolean execute() {
-        if (editor.clipboard == null || editor.clipboard.isEmpty()) return false;
-
-        backup();
-        editor.textField.insert(editor.clipboard, editor.textField.getCaretPosition());
-        return true;
-    }
-}
