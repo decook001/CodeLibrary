@@ -1,3 +1,9 @@
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -14,31 +20,12 @@ public class Main {
     }
 }
 
-import java.io.File;
 
-public class Editor 
+
+public interface EventListener 
 {
-    public EventManager events;
-    private File file;
-
-    public Editor() {
-        this.events = new EventManager("open", "save");
-    }
-
-    public void openFile(String filePath) {
-        this.file = new File(filePath);
-        events.notify("open", file);
-    }
-
-    public void saveFile() throws Exception {
-        if (this.file != null) {
-            events.notify("save", file);
-        } else {
-            throw new Exception("Please open a file first.");
-        }
-    }
+    void update(String eventType, File file);
 }
-
 
 public class EmailNotificationListener implements EventListener 
 {
@@ -54,17 +41,19 @@ public class EmailNotificationListener implements EventListener
     }
 }
 
+public class LogOpenListener implements EventListener {
+    private File log;
 
-public interface EventListener 
-{
-    void update(String eventType, File file);
+    public LogOpenListener(String fileName) {
+        this.log = new File(fileName);
+    }
+
+    @Override
+    public void update(String eventType, File file) {
+        System.out.println("Save to log " + log + ": Someone has performed " + eventType + " operation with the following file: " + file.getName());
+    }
 }
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class EventManager {
     Map<String, List<EventListener>> listeners = new HashMap<>();
@@ -95,17 +84,28 @@ public class EventManager {
 
 
 
-public class LogOpenListener implements EventListener {
-    private File log;
+public class Editor 
+{
+    public EventManager events;
+    private File file;
 
-    public LogOpenListener(String fileName) {
-        this.log = new File(fileName);
+    public Editor() {
+        this.events = new EventManager("open", "save");
     }
 
-    @Override
-    public void update(String eventType, File file) {
-        System.out.println("Save to log " + log + ": Someone has performed " + eventType + " operation with the following file: " + file.getName());
+    public void openFile(String filePath) {
+        this.file = new File(filePath);
+        events.notify("open", file);
+    }
+
+    public void saveFile() throws Exception {
+        if (this.file != null) {
+            events.notify("save", file);
+        } else {
+            throw new Exception("Please open a file first.");
+        }
     }
 }
+
 
 
