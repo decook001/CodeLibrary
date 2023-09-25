@@ -1,0 +1,53 @@
+// https://sourcemaking.com/design_patterns
+
+#Creational design patterns
+These design patterns are all about class instantiation. This pattern can be further divided into class-creation patterns and object-creational patterns. While class-creation patterns use inheritance effectively in the instantiation process, object-creation patterns use delegation effectively to get the job done.
+
+1.Abstract Factory
+Creates an instance of several families of classes
+2.Builder
+Separates object construction from its representation
+3.Factory Method
+Creates an instance of several derived classes
+4.Prototype
+A fully initialized instance to be copied or cloned
+5.Singleton
+A class of which only a single instance can exist
+
+#Structural design patterns
+These design patterns are all about Class and Object composition. Structural class-creation patterns use inheritance to compose interfaces. Structural object-patterns define ways to compose objects to obtain new functionality.
+
+
+1.Adapter
+Match interfaces of different classes
+2.Bridge
+Separates an object’s interface from its implementation
+3.Composite
+A tree structure of simple and composite objects
+4.Decorator
+Add responsibilities to objects dynamically
+5.Facade
+A single class that represents an entire subsystem
+6.Flyweight
+A fine-grained instance used for efficient sharing 
+7.Proxy
+An object representing another object
+
+
+# Behavioral design patterns
+These design patterns are all about Class's objects communication. Behavioral patterns are those patterns that are most specifically concerned with communication between objects.
+
+1.Command
+Encapsulate a command request as an object
+2.Iterator
+Sequentially access the elements of a collection
+3.Memento
+Capture and restore an object's internal state
+4.Observer
+A way of notifying change to a number of classes
+5.State
+Alter an object's behavior when its state changes
+6.Strategy
+Encapsulates an algorithm inside a class
+7.Visitor
+Defines a new operation to a class without change
