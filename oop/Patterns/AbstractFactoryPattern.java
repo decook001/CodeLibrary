@@ -1,6 +1,5 @@
-// Online Java Compiler
-// Use this editor to write, compile and run your Java code online
-
+// https://sourcemaking.com/design_patterns
+// https://refactoring.guru/design-patterns
 
 import java.util.Scanner;
 
@@ -131,4 +130,6 @@ class VictorianChair extends Chair
         System.out.println("victorian chair bought");
     }
 }
->>>>>>> 41ebdf2838b7a2cce9ea08a5f5f4e18ebec39a09:project/src/main/java/AbstractFactoryPattern/Main.java
+
+
+
