@@ -27,9 +27,9 @@ A tree structure of simple and composite objects
 4.Decorator
 Add responsibilities to objects dynamically
 5.Facade
-A single class that represents an entire subsystem
+Hides complex systems under a simpler interface
 6.Flyweight
-A fine-grained instance used for efficient sharing 
+A fine-grained instance used for efficient sharing of memory
 7.Proxy
 An object representing another object
 
