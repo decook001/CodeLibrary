@@ -7,14 +7,13 @@ struct SparseTable
 {
     int n,m;
     vector< vector<int> > spt;
-    vector<int> ar;
-    SparseTable( vector<int> a  )
+    
+    SparseTable( vector<int>& a  )
     {
-        n=a.size();
+        n=a.size()-1;
         m=log2(n);
-        ar=a;
-        m++;
-        spt=vector< vector<int> > ( n+9, vector<int> (m+9) );
+        spt=vector< vector<int> > ( n+9, vector<int> (m+2) );
+        for (int i = 1; i <= n; i++) spt[i][0] = a[i];
         cal();
     }
 
@@ -36,15 +35,13 @@ private:
 
     void cal()
     {
-        for (int i = 0; i < n; i++)
-            spt[i][0] = ar[i];
-
         for (int j = 1; j <= m; j++)
         {
-            for (int i = 0; i + (1 << j) <= n; i++)
+            for (int i = 1; i + (1 << j) <= n+1; i++)
             {
                 spt[i][j] = spt[i][j-1] + spt[i + (1 << (j - 1))][j - 1];
             }
         }
     }
 };
+
