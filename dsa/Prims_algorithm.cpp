@@ -6,7 +6,10 @@ using namespace std;
 // uses dijkstra
 // dijkstra from any node will span the mst
 
-struct Edge
+
+struct PrimsAlgo
+{
+    struct Edge
 {
     int src=0, des=0, wet=0;
     edge(int x=0, int y=0, int z=0 )
@@ -25,8 +28,6 @@ struct Comp
     }
 };
 
-struct PrimsAlgo
-{
     PrimsAlgo( vector< vector< pii> > adj, int n  )
     {
         this->adj=adj;
