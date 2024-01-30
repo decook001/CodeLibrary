@@ -81,3 +81,57 @@ private:
     }
 
 };
+
+
+
+struct LcaBinLift
+{
+    //binary lifting
+
+    vector<int>  depth ;
+    vector<vector<int>> anchestor;
+
+    int n, logn;
+    LcaBinLift( int n ) 
+    {
+        this->n =n;
+        logn=log2(n)+3;
+        depth = vector<int> ( n+9 );
+        anchestor = vector<vector<int>> ( n+9, vector<int> ( logn+1 ) );
+        
+    }
+ 
+    void addEdge( int par, int cld, int val )
+    {
+        depth[cld]=depth[par]+1;
+        anchestor[cld][0]=par;
+        for( int i=1;i<logn;i++ )
+        {
+            int anc=anchestor[cld][i-1];
+            anchestor[cld][i]=anchestor[anc][i-1];
+        }
+    }
+ 
+    int query( int u, int v, int val )
+    {
+        if( depth[u]>depth[v] ) swap(u,v);
+        int dif=depth[v]-depth[u];
+
+        for(int i=0;i<logn;i++)
+        {
+            if( (dif>>i)&1 ) v=anchestor[v][i];
+        }
+        if(v==u) return v;
+ 
+        for( int i=logn-1;i>=0;i-- )
+        {
+            if( anchestor[u][i]==anchestor[v][i] ) continue;
+            u=anchestor[u][i];
+            v=anchestor[v][i];
+        }
+        return anchestor[u][0];
+    }
+};
+
+
+
